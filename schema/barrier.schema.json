@@ -1,0 +1,60 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/MonongahelaHellbender/barrier-atlas/schema/barrier.schema.json",
+  "title": "Barrier envelope",
+  "description": "A certified impossibility: a claim that something cannot exist, plus a re-checkable certificate at an explicit trust rung.",
+  "type": "object",
+  "required": ["id", "schema_version", "claim", "domain", "rung", "certificate", "checker", "status", "provenance", "one_directional"],
+  "additionalProperties": false,
+  "properties": {
+    "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
+    "schema_version": { "const": "0.1" },
+    "claim": {
+      "type": "object",
+      "required": ["statement", "kind", "negation_of"],
+      "additionalProperties": false,
+      "properties": {
+        "statement": { "type": "string", "minLength": 10 },
+        "kind": { "enum": ["impossibility"] },
+        "negation_of": { "type": "string", "minLength": 3 }
+      }
+    },
+    "domain": { "type": "string", "minLength": 3 },
+    "rung": {
+      "type": "object",
+      "required": ["level", "name", "trusted_base"],
+      "additionalProperties": false,
+      "properties": {
+        "level": { "enum": ["R0", "R1", "R2", "R3", "R4", "R5"] },
+        "name": { "type": "string" },
+        "trusted_base": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "certificate": {
+      "type": "object",
+      "required": ["kind"],
+      "properties": {
+        "kind": { "type": "string" },
+        "path": { "type": "string" },
+        "meta": { "type": "object" }
+      }
+    },
+    "checker": {
+      "type": "object",
+      "required": ["kind"],
+      "properties": {
+        "kind": { "enum": ["lratcheck", "lean-axioms", "rup-python", "composed", "manual"] }
+      }
+    },
+    "status": { "enum": ["live", "deferred"] },
+    "provenance": {
+      "type": "object",
+      "required": ["source_package"],
+      "properties": {
+        "source_package": { "type": "string" },
+        "pipeline": { "type": "string" }
+      }
+    },
+    "one_directional": { "type": "string", "minLength": 10 }
+  }
+}

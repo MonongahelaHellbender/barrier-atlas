@@ -1,0 +1,33 @@
+{
+  "id": "private-empirical-barrier",
+  "schema_version": "0.1",
+  "claim": {
+    "statement": "An empirical (not-yet-proved) impossibility from ongoing unpublished research: a numerically robust floor that no tested perturbation has breached. Specifics are withheld until publication; registered here only to exercise the R4 rung and the deferred/manual status.",
+    "kind": "impossibility",
+    "negation_of": "a configuration that breaches the (withheld) numerical floor"
+  },
+  "domain": "private/unpublished",
+  "rung": {
+    "level": "R4",
+    "name": "empirical-robust",
+    "trusted_base": [
+      "a numerical stress-test battery (finite perturbation set)",
+      "floating-point arithmetic",
+      "NOT a proof -- an empirical barrier; full details withheld pending publication"
+    ]
+  },
+  "certificate": {
+    "kind": "numeric-report",
+    "meta": { "status": "withheld pending publication" }
+  },
+  "checker": {
+    "kind": "manual",
+    "promote_recipe": "On publication, promote by either (R2) formalizing the proved bound as a lean-axioms entry, or (R4-automated) wiring a numeric-report checker that re-runs the stored perturbation battery and re-asserts the floor under every perturbation, failing closed on any breach."
+  },
+  "status": "deferred",
+  "provenance": {
+    "source_package": "private research (unpublished; specifics intentionally redacted for public release)",
+    "pipeline": "stress-test battery over a private analysis result"
+  },
+  "one_directional": "Registered honestly at R4: this entry can never report CERTIFIED in v0 (checker is manual/deferred); promotion requires either a real proof or an automated re-assertion of the stored numeric floor."
+}

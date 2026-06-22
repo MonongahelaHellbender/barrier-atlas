@@ -1,0 +1,35 @@
+{
+  "id": "combinatorics-two-bounds",
+  "schema_version": "0.1",
+  "claim": {
+    "statement": "Both W(3,3) <= 27 and R(3,4) <= 9 hold: a conjoined certified-impossibility bundle over two independent combinatorial families.",
+    "kind": "impossibility",
+    "negation_of": "a counterexample to either W(3,3) <= 27 or R(3,4) <= 9"
+  },
+  "domain": "combinatorics/composite",
+  "rung": {
+    "level": "R2",
+    "name": "verified-checker-program",
+    "trusted_base": [
+      "the union of both sub-barriers' bases (both R2 lratcheck)",
+      "min-trust rung = max(R2, R2, step R0) = R2"
+    ]
+  },
+  "certificate": {
+    "kind": "composition",
+    "meta": { "rule": "rung(C) = min-trust(parts + step); see docs/composition-example.md" }
+  },
+  "checker": {
+    "kind": "composed",
+    "composition": {
+      "sub_barriers": ["vdw-3-3-le-27", "ramsey-3-4-le-9"],
+      "step": { "rung": "R0", "description": "conjunction: both impossibilities hold independently; the AND-join is kernel-trivial (R0)" }
+    }
+  },
+  "status": "live",
+  "provenance": {
+    "source_package": "barrier-atlas (composition)",
+    "pipeline": "recursively re-checks both sub-barriers, then asserts the declared rung equals the weakest link"
+  },
+  "one_directional": "CERTIFIED only if BOTH sub-barriers re-certify AND the declared rung equals the min-trust (weakest) rung. A failing/deferred sub-barrier, or a declared rung stronger than the weakest link, fails closed -- you cannot launder a composite up to a rung none of its parts earned."
+}

@@ -1,0 +1,38 @@
+{
+  "id": "ramsey-3-4-le-9",
+  "schema_version": "0.1",
+  "claim": {
+    "statement": "Every 2-coloring of the edges of the complete graph K9 contains a red triangle (K3) or a blue K4 (Ramsey R(3,4) <= 9).",
+    "kind": "impossibility",
+    "negation_of": "an edge 2-coloring of K9 with no red K3 and no blue K4"
+  },
+  "domain": "combinatorics/Ramsey",
+  "rung": {
+    "level": "R2",
+    "name": "verified-checker-program",
+    "trusted_base": [
+      "Lean compiler",
+      "checkProofArr_unsat (Lean-proved sound)",
+      "untrusted certificate parser"
+    ]
+  },
+  "certificate": {
+    "kind": "lrat-flat",
+    "path": "certs/samples_r34.cert",
+    "sha256": "12d3ec5d1b7f38a63f1c9ce205d72a6335b97a0a89d4c823d46b1207985c7052",
+    "meta": { "original_clauses": 210, "proof_steps": 8635, "note": "same checker, different combinatorial family -- the checker only ever sees a CNF + certificate" }
+  },
+  "checker": {
+    "kind": "lratcheck",
+    "cert": "certs/samples_r34.cert",
+    "accept_pattern": "VERIFIED",
+    "binary_env": "LRATCHECK_BIN",
+    "binary_default": "../dist/lean-verification-journey/.lake/build/bin/lratcheck"
+  },
+  "status": "live",
+  "provenance": {
+    "source_package": "lean-verification-journey",
+    "pipeline": "glucose (DRAT) -> drat-trim (LRAT) -> flatten -> lratcheck"
+  },
+  "one_directional": "The Lean-proved checker can never falsely certify a parsed CNF as UNSAT; a solver/toolchain/parser bug only causes a refusal. The trusted link is the ENCODER (this CNF really encodes R(3,4)). The atlas binds bytes by sha256 + cross-checks parsed counts, so tampering fails closed; the encoding itself is trusted, not checked here."
+}

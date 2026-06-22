@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+barriers/_tmp_*.barrier.json
+barriers/_test_*.barrier.json
+certs/_tmp_*.cert
+certs/_test_*.cert

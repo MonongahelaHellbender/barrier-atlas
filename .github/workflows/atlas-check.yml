@@ -1,0 +1,32 @@
+name: Barrier Atlas check
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # The one-directional safety property is the load-bearing claim: checkers
+      # must fail CLOSED. The tamper test is environment-independent (sha256 binding,
+      # no toolchain needed); the axiom-lie test self-skips honestly when Lean is
+      # absent. Either way this step must pass.
+      - name: One-directional safety tests
+        run: python3 tests/test_one_directional.py
+
+      # Always-valid invariant on a bare runner: re-checking the atlas must never
+      # REFUSE a live barrier. Without the Lean toolchain the lratcheck/lean-axioms
+      # entries degrade to UNVERIFIABLE-HERE (exit 0); nothing should ever be REFUSED.
+      - name: Atlas must never REFUSE
+        run: |
+          set -euo pipefail
+          out="$(python3 tools/barrier_check.py)"
+          echo "$out"
+          echo "$out" | grep -q "0 refused" || { echo "A barrier was REFUSED"; exit 1; }

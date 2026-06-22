@@ -1,0 +1,40 @@
+{
+  "id": "nn-robust-2relu-box",
+  "schema_version": "0.1",
+  "claim": {
+    "statement": "A quantized 2-layer ReLU network has no adversarial example in the input box [-1,1]^2: class 0 strictly beats class 1 for every input in the box (net_robust).",
+    "kind": "impossibility",
+    "negation_of": "an input in [-1,1]^2 at which class 1 >= class 0 (an adversarial example)"
+  },
+  "domain": "ml/robustness",
+  "rung": {
+    "level": "R0",
+    "name": "kernel-checked",
+    "trusted_base": [
+      "Classical.choice (classical logic from list lemmas)",
+      "no compiler, no external program -- a kernel-checked proof object"
+    ]
+  },
+  "certificate": {
+    "kind": "lean-theorem",
+    "meta": {
+      "theorem": "net_robust",
+      "method": "integer interval bound propagation (dot_interval / affine_sound / relu_sound), proved over-approximating; margin lower bound stays positive on the whole box",
+      "axioms": ["propext", "Classical.choice", "Quot.sound"]
+    }
+  },
+  "checker": {
+    "kind": "lean-axioms",
+    "repo_env": "LEAN_REPO",
+    "repo_default": "../dist/lean-verification-journey",
+    "lean_file": "LeanVerificationJourney/Ibp.lean",
+    "theorem": "net_robust",
+    "expected_axioms": ["propext", "Classical.choice", "Quot.sound"]
+  },
+  "status": "live",
+  "provenance": {
+    "source_package": "lean-verification-journey",
+    "pipeline": "Lean 4 formalization; #print axioms audit is the trust boundary"
+  },
+  "one_directional": "The checker certifies only if the theorem elaborates AND its axiom set exactly equals the declared trusted base; any extra axiom (a silent rung-slide) or a failed build fails closed."
+}

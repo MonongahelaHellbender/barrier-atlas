@@ -1,0 +1,35 @@
+{
+  "id": "mixed-rung-bundle",
+  "schema_version": "0.1",
+  "claim": {
+    "statement": "A bundle conjoining the deferred private R4 barrier with the live R2 W(3,3) <= 27 barrier -- deliberately mixing rungs to exercise min-trust propagation.",
+    "kind": "impossibility",
+    "negation_of": "a counterexample to either the private R4 barrier or W(3,3) <= 27"
+  },
+  "domain": "composite/mixed-rung",
+  "rung": {
+    "level": "R4",
+    "name": "empirical-robust",
+    "trusted_base": [
+      "min-trust = max(R4 deferred, R2, step R0) = R4",
+      "because one part is only an empirical R4 barrier, the whole bundle can be no stronger than R4"
+    ]
+  },
+  "certificate": {
+    "kind": "composition",
+    "meta": { "demonstrates": "composing with a deferred/weaker barrier propagates that weakness; the composite cannot certify above its weakest link" }
+  },
+  "checker": {
+    "kind": "composed",
+    "composition": {
+      "sub_barriers": ["private-empirical-barrier", "vdw-3-3-le-27"],
+      "step": { "rung": "R0", "description": "conjunction of a deferred R4 barrier and a live R2 barrier" }
+    }
+  },
+  "status": "live",
+  "provenance": {
+    "source_package": "barrier-atlas (composition)",
+    "pipeline": "recursively re-checks both sub-barriers; one is DEFERRED, so the composite honestly reports DEFERRED"
+  },
+  "one_directional": "This composite can never report CERTIFIED while a sub-barrier is deferred: the deferred R4 part short-circuits the composite to DEFERRED. That is the calculus working -- a chain is exactly as trustworthy as its weakest link."
+}
