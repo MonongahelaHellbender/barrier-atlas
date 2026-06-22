@@ -5,7 +5,7 @@
 > **trust rung**. The impossibility dual of a proof library.
 
 Sister project to `lean-verification-journey` / `certified-combinatorics-verification`.
-Status: **v0 scaffold, executing.**
+Status: **v0.1 public, green, and claim-boundary hardened.**
 
 ---
 
@@ -54,10 +54,10 @@ higher rung. Partial barriers ("rigorous on a subspace, R4-numerical elsewhere")
 are first-class, not footnotes: they carry a *per-region* rung. This rung-arithmetic
 is the genuinely new object — the negative dual of a proof's dependency graph.
 
-> **Deliberate v0 scope guard:** the composition calculus is specified but kept
-> *out* of the v0 live set. Adjudicating fuzzy composed rungs is exactly where this
-> could rot into taxonomy-bikeshedding (the stated risk). v0 ships atomic barriers
-> only; composition gets one worked example in `docs/` and no automated checker yet.
+> **Deliberate v0.1 scope guard:** the live composition calculus is limited to
+> conjunctive composition with explicit sub-barriers and a checked min-trust rung.
+> Multi-region or fuzzy empirical composition stays out of the live set until it
+> has its own refusal cases.
 
 ### 2.3 The envelope
 
@@ -87,8 +87,9 @@ kinds** from one envelope format, with honest deferrals for the rest:
   honestly with the exact recipe to promote it. This *is* the demonstration of the
   lower rungs.
 
-Success = `barrier_check.py barriers/*.barrier.json` runs green on the LIVE set and
-honestly reports the deferred one, with the rung/trusted-base printed for each.
+Success = `barrier_check.py barriers/*.barrier.json` runs green on the LIVE set,
+honestly reports the deferred entries, and checks bytes + shape + v0 encoders for
+the certificate-backed combinatorics claims.
 
 ## 4. Milestones
 
@@ -100,16 +101,23 @@ honestly reports the deferred one, with the rung/trusted-base printed for each.
 3. ✅ **DONE** — the composition calculus: a `composed` checker recursively re-checks
    sub-barriers and enforces min-trust (weakest-link) rung arithmetic; rung-laundering
    fails closed. Two live composed barriers (one CERTIFIED, one DEFERRED-by-propagation).
-4. ⏭ Multi-*region* rungs (a barrier holding at different rungs on different regions;
+4. ✅ **DONE** — v0 encoder binding: W(3,3) and R(3,4) CNFs are regenerated from
+   declared specs and must exactly match the original clauses embedded in the cert.
+5. ✅ **DONE** — portfolio index and stronger safety tests: reviewer-facing
+   [`PORTFOLIO.md`](PORTFOLIO.md), encoder-lie refusal, and deterministic RUP
+   mutation fuzzing.
+6. ⏭ Multi-*region* rungs (a barrier holding at different rungs on different regions;
    schema `regions: [...]` + a regional checker).
-5. ⏭ A web/`/barrier-atlas` view on the Foundation dashboard (visual negative-space map).
-6. ⏭ Outreach framing: the atlas as the concrete artifact behind the ARIA/MATS pitch.
+7. ⏭ A web/`/barrier-atlas` view on the Foundation dashboard (visual negative-space map).
+8. ⏭ A genuinely new or previously un-machine-checked certified impossibility; current
+   status is a bounded frontier packet, not a result. See [`docs/frontier-targets.md`](docs/frontier-targets.md).
 
 ## 5. Honest risks
 
-- **Adjudication creep.** Lower rungs (R3–R5) are judgment calls. Mitigation: keep
-  v0 to R0–R2 live (mechanically checkable); R4+ entries are *registered* but never
-  auto-claimed as passing.
+- **Adjudication creep.** Lower rungs (R3–R5) are judgment calls. Mitigation:
+  keep R3 live only when it is an explicit independent recomputation, keep R4+
+  entries registered/deferred unless they have an automated checker, and require
+  refusal tests for every new checker path.
 - **Solo maintenance.** Each entry needs a real artifact. Mitigation: seed only from
   results that already exist and are already certified elsewhere.
 - **"Just a registry" critique.** The novelty is the *rung calculus + heterogeneity*,
@@ -132,12 +140,6 @@ honestly reports the deferred one, with the rung/trusted-base printed for each.
 - **Pass 4 — scope discipline on composition.** The rung-calculus is the frontier idea but
   the adjudication risk is real, so it is *specified* but explicitly **excluded from the v0
   live set** (one `docs/` worked example, no auto-checker). Ship atomic, honest, green.
-- **Pass 6 — two independent checkers > one, and trust must compose.** Added the R3
-  `rup-python` re-derivation (same cert, second implementation — it agreed in <0.1s) and the
-  `composed` min-trust calculus. The composition checker is itself one-directional: a laundered
-  rung (declaring a composite stronger than its weakest part) fails closed, now a permanent test.
-  Design choice held from Pass 4: composition shipped *atomic+conjunctive* only — the worked min-
-  trust example is real and checked, multi-region rungs stay roadmap to avoid adjudication creep.
 - **Pass 5 — negative testing exposed a real overclaim, now fixed.** Running a tamper test
   (mangle the cert's count token) made `lratcheck` certify a *different* formula as VERIFIED —
   no soundness break (`checkProofArr_unsat` is kernel-proved), but the cert wasn't bound to the
@@ -147,3 +149,18 @@ honestly reports the deferred one, with the rung/trusted-base printed for each.
   CNF really encodes the combinatorial claim — trusted, not re-checked here). The two negative
   cases are now permanent regression tests (`tests/test_one_directional.py`). Lesson: the safety
   *claim* was cheap; the safety *property* only became real once a negative test tried to break it.
+- **Pass 6 — two independent checkers > one, and trust must compose.** Added the R3
+  `rup-python` re-derivation (same cert, second implementation — it agreed in <0.1s) and the
+  `composed` min-trust calculus. The composition checker is itself one-directional: a laundered
+  rung (declaring a composite stronger than its weakest part) fails closed, now a permanent test.
+  Design choice held from Pass 4: composition shipped *atomic+conjunctive* only — the worked min-
+  trust example is real and checked, multi-region rungs stay roadmap to avoid adjudication creep.
+- **Pass 7 — close the v0 encoder gap.** Added `tools/encoder_check.py`, declared
+  encoder specs in the W(3,3) and R(3,4) envelopes, and made `barrier_check.py`
+  require exact formula matches before certification. The former "trusted encoder"
+  boundary is now a checked v0 boundary for these two families. A deliberately
+  wrong encoder spec is a permanent refusal test.
+- **Pass 8 — reviewer leverage without overclaiming.** Added `PORTFOLIO.md` as a
+  public index across the verification artifacts and `docs/frontier-targets.md` as
+  the next-result packet. The latter is explicitly `NEW_RESULT_NOT_CLAIMED`: it
+  defines the gate for a future frontier entry without pretending one has been earned.

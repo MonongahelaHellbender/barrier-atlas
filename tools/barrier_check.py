@@ -25,6 +25,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+import encoder_check  # noqa: E402  (claim-CNF binding for v0 combinatorics)
 import rup_check  # noqa: E402  (sibling module: the independent R3 checker)
 
 ATLAS_ROOT = Path(__file__).resolve().parent.parent
@@ -36,6 +37,17 @@ CERTIFIED, REFUSED, UNVERIFIABLE, DEFERRED = (
 def _resolve(p: str) -> Path:
     """Resolve an envelope path relative to the atlas root."""
     return (ATLAS_ROOT / p).resolve()
+
+
+def _check_encoder_binding(cert: Path, cert_spec: dict):
+    enc = cert_spec.get("encoder")
+    if not enc:
+        return None
+    try:
+        ok, detail = encoder_check.check_cert_encoder(cert, enc)
+    except Exception as e:  # noqa: BLE001
+        return False, f"encoder check crashed: {e}"
+    return ok, detail
 
 
 def check_lratcheck(env: dict):
@@ -61,8 +73,14 @@ def check_lratcheck(env: dict):
         got = hashlib.sha256(cert.read_bytes()).hexdigest()
         if got != want_hash:
             return REFUSED, f"cert sha256 mismatch (tampered/substituted): {got[:16]}..."
+    encoder_detail = _check_encoder_binding(cert, cert_spec)
+    if encoder_detail:
+        ok, detail = encoder_detail
+        if not ok:
+            return REFUSED, detail
     if not binary.exists():
-        return UNVERIFIABLE, f"checker binary not built ({binary})"
+        suffix = f"; {encoder_detail[1]}" if encoder_detail else ""
+        return UNVERIFIABLE, f"checker binary not built ({binary}){suffix}"
     try:
         out = subprocess.run([str(binary), str(cert)], capture_output=True,
                              text=True, timeout=600)
@@ -78,7 +96,8 @@ def check_lratcheck(env: dict):
             return REFUSED, (f"parsed shape {pc}cl/{ps}steps != declared "
                              f"{meta.get('original_clauses')}cl/{meta.get('proof_steps')}steps")
     if out.returncode == 0 and re.search(chk["accept_pattern"], blob):
-        return CERTIFIED, f"{chk['accept_pattern']}, bytes+shape bound"
+        binding = "bytes+shape+encoder bound" if encoder_detail else "bytes+shape bound"
+        return CERTIFIED, f"{chk['accept_pattern']}, {binding}"
     return REFUSED, f"checker did not emit {chk['accept_pattern']} (rc={out.returncode})"
 
 
@@ -129,6 +148,11 @@ def check_rup_python(env: dict):
         got = hashlib.sha256(cert.read_bytes()).hexdigest()
         if got != want_hash:
             return REFUSED, f"cert sha256 mismatch (tampered/substituted): {got[:16]}..."
+    encoder_detail = _check_encoder_binding(cert, cert_spec)
+    if encoder_detail:
+        ok, detail = encoder_detail
+        if not ok:
+            return REFUSED, detail
     formula, steps = rup_check.parse_cert(cert.read_text(encoding="utf-8"))
     meta = cert_spec.get("meta", {})
     if (meta.get("original_clauses", len(formula)) != len(formula)
@@ -136,7 +160,8 @@ def check_rup_python(env: dict):
         return REFUSED, (f"parsed shape {len(formula)}cl/{len(steps)}steps != declared "
                          f"{meta.get('original_clauses')}cl/{meta.get('proof_steps')}steps")
     ok, detail = rup_check.check_proof(formula, steps)
-    return (CERTIFIED, f"independent RUP agrees ({detail})") if ok else (REFUSED, detail)
+    prefix = f"{encoder_detail[1]}; " if encoder_detail else ""
+    return (CERTIFIED, f"{prefix}independent RUP agrees ({detail})") if ok else (REFUSED, detail)
 
 
 RUNG_ORDER = ["R0", "R1", "R2", "R3", "R4", "R5"]  # strongest .. weakest
@@ -156,7 +181,13 @@ def _load_by_id(bid: str):
     if _ID_INDEX is None:
         _ID_INDEX = {}
         for p in glob.glob(str(ATLAS_ROOT / "barriers" / "*.barrier.json")):
-            e = json.loads(Path(p).read_text())
+            path = Path(p)
+            if path.name.startswith("_test_"):
+                continue
+            try:
+                e = json.loads(path.read_text())
+            except FileNotFoundError:
+                continue
             _ID_INDEX[e["id"]] = e
     return _ID_INDEX.get(bid)
 
@@ -214,7 +245,10 @@ def run(env: dict):
 
 
 def main(argv):
-    paths = argv[1:] or sorted(glob.glob(str(ATLAS_ROOT / "barriers" / "*.barrier.json")))
+    paths = argv[1:] or [
+        p for p in sorted(glob.glob(str(ATLAS_ROOT / "barriers" / "*.barrier.json")))
+        if not Path(p).name.startswith("_test_")
+    ]
     if not paths:
         print("no barrier envelopes found", file=sys.stderr)
         return 2

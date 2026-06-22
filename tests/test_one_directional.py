@@ -7,6 +7,7 @@ produce CERTIFIED. Run: python3 tests/test_one_directional.py
 """
 import json
 import pathlib
+import random
 import re
 import shutil
 import subprocess
@@ -80,6 +81,44 @@ def test_rup_python_refuses_broken_proof():
     print("PASS  independent RUP checker refuses broken/truncated proofs")
 
 
+def test_encoder_lie_refused():
+    """The claim->CNF binding must fail closed if the declared encoder is wrong."""
+    env = json.loads((ROOT / "barriers" / "vdw-3-3-r3.barrier.json").read_text())
+    env["certificate"]["encoder"]["n"] = 26
+    rc, out = _run(env, "encoderlie")
+    assert rc == 1 and "encoder mismatch" in out and "CERTIFIED" not in out, out
+    print("PASS  wrong encoder spec -> REFUSED (claim/CNF binding fails closed)")
+
+
+def test_rup_python_deterministic_mutation_fuzzer():
+    """A small deterministic mutation fuzzer guards the independent RUP checker."""
+    sys.path.insert(0, str(ROOT / "tools"))
+    import rup_check
+
+    rng = random.Random(20260622)
+    certs = ["samples_w33.cert", "samples_r34.cert"]
+    cases = 0
+    for cert in certs:
+        formula, steps = rup_check.parse_cert((ROOT / "certs" / cert).read_text())
+        assert rup_check.check_proof(formula, steps)[0] is True
+        bad_hint = len(formula) + len(steps) + 1000
+        hintful = [i for i, (_clause, hints) in enumerate(steps) if hints]
+        for _ in range(25):
+            mode = rng.choice(["truncate", "bad_first_hint", "no_empty_clause"])
+            mutated = [(list(clause), list(hints)) for clause, hints in steps]
+            if mode == "truncate":
+                mutated = mutated[:rng.randrange(0, len(mutated))]
+            elif mode == "bad_first_hint":
+                idx = rng.choice(hintful)
+                mutated[idx][1][0] = bad_hint
+            else:
+                mutated[-1] = ([(bad_hint, False)], list(mutated[-1][1]))
+            ok, detail = rup_check.check_proof(formula, mutated)
+            assert ok is False, f"{cert} {mode} unexpectedly verified: {detail}"
+            cases += 1
+    print(f"PASS  deterministic RUP mutation fuzzer refused {cases} mutated proofs")
+
+
 def test_honest_run_certifies():
     """The real, unmodified entries must still certify (no false negatives)."""
     r = subprocess.run([PY, CHECK], capture_output=True, text=True)
@@ -92,5 +131,7 @@ if __name__ == "__main__":
     test_axiom_lie_refused()
     test_rung_laundering_refused()
     test_rup_python_refuses_broken_proof()
+    test_encoder_lie_refused()
+    test_rup_python_deterministic_mutation_fuzzer()
     test_honest_run_certifies()
     print("\nAll one-directional safety tests passed.")

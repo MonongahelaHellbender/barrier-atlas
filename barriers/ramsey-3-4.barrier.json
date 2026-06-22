@@ -20,7 +20,14 @@
     "kind": "lrat-flat",
     "path": "certs/samples_r34.cert",
     "sha256": "12d3ec5d1b7f38a63f1c9ce205d72a6335b97a0a89d4c823d46b1207985c7052",
-    "meta": { "original_clauses": 210, "proof_steps": 8635, "note": "same checker, different combinatorial family -- the checker only ever sees a CNF + certificate" }
+    "meta": { "original_clauses": 210, "proof_steps": 8635, "note": "same checker, different combinatorial family -- the checker only ever sees a CNF + certificate" },
+    "encoder": {
+      "kind": "ramsey_edge_coloring_cnf",
+      "vertices": 9,
+      "red_clique": 3,
+      "blue_clique": 4,
+      "variable_scheme": "lexicographic edge variables; positive literal means red"
+    }
   },
   "checker": {
     "kind": "lratcheck",
@@ -34,5 +41,5 @@
     "source_package": "lean-verification-journey",
     "pipeline": "glucose (DRAT) -> drat-trim (LRAT) -> flatten -> lratcheck"
   },
-  "one_directional": "The Lean-proved checker can never falsely certify a parsed CNF as UNSAT; a solver/toolchain/parser bug only causes a refusal. The trusted link is the ENCODER (this CNF really encodes R(3,4)). The atlas binds bytes by sha256 + cross-checks parsed counts, so tampering fails closed; the encoding itself is trusted, not checked here."
+  "one_directional": "The Lean-proved checker can never falsely certify a parsed CNF as UNSAT; a solver/toolchain/parser bug only causes a refusal. The atlas binds bytes by sha256, cross-checks parsed counts, and regenerates the Ramsey edge-coloring CNF from the declared encoder spec to require an exact formula match; tampering or encoder drift fails closed."
 }

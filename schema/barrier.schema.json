@@ -36,7 +36,17 @@
       "properties": {
         "kind": { "type": "string" },
         "path": { "type": "string" },
-        "meta": { "type": "object" }
+        "meta": { "type": "object" },
+        "encoder": {
+          "type": "object",
+          "required": ["kind"],
+          "properties": {
+            "kind": {
+              "enum": ["vdw_progression_cnf", "ramsey_edge_coloring_cnf"]
+            }
+          },
+          "additionalProperties": true
+        }
       }
     },
     "checker": {

@@ -10,6 +10,9 @@ rung**. The impossibility dual of a proof library.
 > the secret") are *impossibilities*, and an impossibility needs a certificate, not
 > a demo. A proved barrier is also the rare kind of knowledge that **compounds and
 > never decays** — true forever, pruning the search tree for anyone who comes later.
+>
+> For a reviewer-facing map of the surrounding public work, see
+> [`PORTFOLIO.md`](PORTFOLIO.md).
 
 ## What's here (v0)
 
@@ -52,24 +55,32 @@ $ python3 tools/barrier_check.py
    passing. Tampered cert, missing tool, extra axiom, laundered rung — all fail
    *closed*. This is the same asymmetric safety the barriers themselves have, and it's
    regression-guarded in [`tests/test_one_directional.py`](tests/test_one_directional.py)
-   (5 tests, incl. rung-laundering and the independent checker refusing a broken proof).
+   (7 tests, incl. rung-laundering, encoder-lie refusal, and deterministic RUP
+   mutation fuzzing).
 
 ## Trust boundary (stated, not hidden)
 
-The `lratcheck` checker proves *the parsed CNF is UNSAT* — the binding from that CNF
-to the human claim ("this really encodes W(3,3)") is the **encoder**, which is
-trusted, not re-checked here. The atlas pins the exact certificate bytes by SHA-256
-and cross-checks parsed clause/step counts, so a tampered or substituted file fails
-closed; what remains trusted is named in each envelope's `one_directional` field.
+The `lratcheck` checker proves *the parsed CNF is UNSAT*. The v0 combinatorics
+entries now also regenerate the claim CNF from a declared encoder spec and require
+an exact match to the original clauses embedded in the cert. The atlas therefore
+binds:
+
+- exact certificate bytes by SHA-256;
+- parsed clause/step counts;
+- the W(3,3) and R(3,4) claim-to-CNF encoders.
+
+If any of those drift, the entry is `REFUSED`. What remains trusted is the small
+encoder-checking code itself plus the checker trusted base named by each rung.
 
 ## Layout
 
 ```
 PLAN.md      vision, rung ladder, composition calculus, roadmap, refinement log
+PORTFOLIO.md public reviewer-facing index across the verification artifacts
 SCHEMA.md    the envelope spec        schema/barrier.schema.json  machine schema
 barriers/    one .barrier.json per certified impossibility
 certs/       bundled certificates (sha256-pinned)
-tools/       barrier_check.py — the dispatcher (4 checker kinds); rup_check.py — the independent R3 LRAT checker
+tools/       barrier_check.py — dispatcher; rup_check.py — R3 checker; encoder_check.py — v0 CNF binding
 tests/       one-directional safety regression tests
 docs/        composition worked-example (min-rung arithmetic)
 ```
@@ -79,6 +90,7 @@ docs/        composition worked-example (min-rung arithmetic)
 ```bash
 python3 tools/barrier_check.py            # re-check every barrier
 python3 tests/test_one_directional.py     # prove the checkers fail closed
+python3 tools/encoder_check.py certs/samples_w33.cert w33
 ```
 
 Needs Python 3 (stdlib only). The `lratcheck` entries also need the sibling
@@ -88,6 +100,7 @@ honestly reports `UNVERIFIABLE-HERE` rather than passing. Override locations wit
 
 ## Status
 
-v0 — built and green: 4 checker kinds (`lratcheck`, `lean-axioms`, `rup-python`,
-`composed`), 7 barriers, 5 safety tests. Not yet a public repo; see [`PLAN.md`](PLAN.md)
-§4 for what's left (hardened multi-region rungs, a dashboard view, the outreach framing).
+v0.1 — public and green: 4 checker kinds (`lratcheck`, `lean-axioms`, `rup-python`,
+`composed`), 7 barriers, 7 safety tests, and v0 combinatorics encoder binding.
+See [`PLAN.md`](PLAN.md) §4 for what's left (hardened multi-region rungs, a
+dashboard view, and a genuinely new certified-impossibility target).

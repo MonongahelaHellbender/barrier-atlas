@@ -19,7 +19,14 @@
     "kind": "lrat-flat",
     "path": "certs/samples_w33.cert",
     "sha256": "f280ae0847138a9e4332446de277ef9e870d27571d33b80d0b3a0f68a7aa4b7a",
-    "meta": { "original_clauses": 615, "proof_steps": 6179, "cross_reference": "same bytes as vdw-3-3-le-27 (R2); two independent checkers, two rungs" }
+    "meta": { "original_clauses": 615, "proof_steps": 6179, "cross_reference": "same bytes as vdw-3-3-le-27 (R2); two independent checkers, two rungs" },
+    "encoder": {
+      "kind": "vdw_progression_cnf",
+      "n": 27,
+      "colors": 3,
+      "progression_length": 3,
+      "variable_scheme": "point-major, zero-based colors, one-based DIMACS variables"
+    }
   },
   "checker": {
     "kind": "rup-python",
@@ -30,5 +37,5 @@
     "source_package": "barrier-atlas (independent re-implementation)",
     "pipeline": "same cert as the R2 entry; re-checked by a separate Python RUP implementation written from the Lrat.lean semantics, not the Lean code"
   },
-  "one_directional": "The Python checker fails closed (bad hint, non-unit, or no empty clause => REFUSED), and the cert is sha256+shape bound. This is R3, NOT R2: a bug in rup_check.py could in principle cause a false accept, which is exactly why it sits one rung below the kernel-proved checker. Its value is independent corroboration, not a stronger guarantee."
+  "one_directional": "The Python checker fails closed (bad hint, non-unit, or no empty clause => REFUSED), and the cert is sha256+shape+encoder bound. This is R3, NOT R2: a bug in rup_check.py could in principle cause a false accept, which is exactly why it sits one rung below the kernel-proved checker. Its value is independent corroboration, not a stronger guarantee."
 }

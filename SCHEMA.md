@@ -20,7 +20,8 @@ of the atlas: a claim of impossibility plus everything needed to *re-check it* a
 | `certificate.kind` | ✓ | format of the evidence (`lrat-flat`, `lean-theorem`, `numeric-report`, …) |
 | `certificate.path` |  | path to the cert artifact, if any (relative to atlas root) |
 | `certificate.meta` |  | free dict (step counts, sizes, source theorem name, …) |
-| `checker.kind` | ✓ | how to re-check: `lratcheck`, `lean-axioms`, `manual` (deferred) |
+| `certificate.encoder` |  | optional claim-to-CNF generator spec; when present, the parsed cert formula must exactly match the regenerated clauses |
+| `checker.kind` | ✓ | how to re-check: `lratcheck`, `lean-axioms`, `rup-python`, `composed`, or `manual` (deferred) |
 | `checker.*` | ✓ | kind-specific config (see below) |
 | `status` | ✓ | `"live"` (auto-checkable now) or `"deferred"` (registered, recipe given) |
 | `provenance` | ✓ | where the artifact came from (source package, generation pipeline) |
@@ -39,7 +40,34 @@ of the atlas: a claim of impossibility plus everything needed to *re-check it* a
 }
 ```
 Runs the compiled checker on the cert; `CERTIFIED` iff stdout matches
-`accept_pattern`. If the binary is absent → `UNVERIFIABLE-HERE`.
+`accept_pattern`. If the binary is absent → `UNVERIFIABLE-HERE`. When
+`certificate.encoder` is present, the encoder match is checked before the binary
+is invoked, so an encoder mismatch still `REFUSED` on a bare runner.
+
+For v0 combinatorics entries, `certificate.encoder` supports:
+
+```json
+"encoder": {
+  "kind": "vdw_progression_cnf",
+  "n": 27,
+  "colors": 3,
+  "progression_length": 3
+}
+```
+
+and:
+
+```json
+"encoder": {
+  "kind": "ramsey_edge_coloring_cnf",
+  "vertices": 9,
+  "red_clique": 3,
+  "blue_clique": 4
+}
+```
+
+Both require an exact ordered clause match to the original formula embedded in the
+flat cert. This closes the v0 claim/CNF binding for W(3,3) and R(3,4).
 
 ### `lean-axioms` (rung R0/R1 — kernel-checked)
 ```json
@@ -61,9 +89,10 @@ line, and `CERTIFIED` iff the axiom set **exactly equals** `expected_axioms`. An
 "checker": { "kind": "rup-python", "cert": "certs/samples_w33.cert" }
 ```
 Re-checks the *same* cert with an independent from-scratch Python LRAT/RUP checker
-(`tools/rup_check.py`), with the same sha256 + parsed-count binding. `CERTIFIED` iff
-the independent checker agrees. R3, not R2: you now trust this Python, so it sits one
-rung below the kernel-proved checker — its value is cross-implementation corroboration.
+(`tools/rup_check.py`), with the same sha256 + parsed-count + optional encoder
+binding. `CERTIFIED` iff the independent checker agrees. R3, not R2: you now trust
+this Python, so it sits one rung below the kernel-proved checker — its value is
+cross-implementation corroboration.
 
 ### `composed` (rung = min-trust of the parts)
 ```json

@@ -20,7 +20,14 @@
     "kind": "lrat-flat",
     "path": "certs/samples_w33.cert",
     "sha256": "f280ae0847138a9e4332446de277ef9e870d27571d33b80d0b3a0f68a7aa4b7a",
-    "meta": { "original_clauses": 615, "proof_steps": 6179, "format": "flat space-separated DIMACS ints consumed by parseCert" }
+    "meta": { "original_clauses": 615, "proof_steps": 6179, "format": "flat space-separated DIMACS ints consumed by parseCert" },
+    "encoder": {
+      "kind": "vdw_progression_cnf",
+      "n": 27,
+      "colors": 3,
+      "progression_length": 3,
+      "variable_scheme": "point-major, zero-based colors, one-based DIMACS variables"
+    }
   },
   "checker": {
     "kind": "lratcheck",
@@ -34,5 +41,5 @@
     "source_package": "lean-verification-journey",
     "pipeline": "glucose (DRAT) -> drat-trim (LRAT, s VERIFIED) -> flatten -> lratcheck"
   },
-  "one_directional": "checkProofArr_unsat (kernel-proved) guarantees lratcheck can never falsely certify a parsed CNF as UNSAT -- a bug only causes a refusal. The remaining trusted link is the ENCODER: that this CNF faithfully encodes W(3,3). The atlas binds the exact bytes by sha256 + cross-checks parsed clause/step counts, so tampering fails closed; the claim<->CNF encoding itself is trusted, not checked here."
+  "one_directional": "checkProofArr_unsat (kernel-proved) guarantees lratcheck can never falsely certify a parsed CNF as UNSAT -- a bug only causes a refusal. The atlas binds the exact bytes by sha256, cross-checks parsed clause/step counts, and regenerates the W(3,3) CNF from the declared encoder spec to require an exact formula match. Tampering or encoder drift fails closed."
 }
