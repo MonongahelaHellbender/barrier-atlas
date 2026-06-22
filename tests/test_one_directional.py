@@ -130,6 +130,22 @@ def test_rup_python_differential_fuzzer():
     print(r.stdout.strip())
 
 
+def test_hybrid_schur_vdw_certifies_and_refuses_bad_witness():
+    """The new hybrid barrier must certify honestly and reject a bad lower witness."""
+    sys.path.insert(0, str(ROOT / "tools"))
+    import hybrid_schur_vdw_check
+
+    witness = [0, 1, 0, 2, 1, 2, 2, 0, 2, 0, 1, 1]
+    ok, detail, result = hybrid_schur_vdw_check.check_barrier(13, 3, lower_witness=witness)
+    assert ok is True, (detail, result)
+
+    env = json.loads((ROOT / "barriers" / "hybrid-schur-vdw-3color-le-13.barrier.json").read_text())
+    env["certificate"]["meta"]["lower_bound_witness"] = [0] * 12
+    rc, out = _run(env, "hybridbadwitness")
+    assert rc == 1 and "REFUSED" in out and "CERTIFIED" not in out, out
+    print("PASS  hybrid Schur-vdW certifies and rejects a bad lower witness")
+
+
 def test_honest_run_certifies():
     """The real, unmodified entries must still certify (no false negatives)."""
     r = subprocess.run([PY, CHECK], capture_output=True, text=True)
@@ -145,5 +161,6 @@ if __name__ == "__main__":
     test_encoder_lie_refused()
     test_rup_python_deterministic_mutation_fuzzer()
     test_rup_python_differential_fuzzer()
+    test_hybrid_schur_vdw_certifies_and_refuses_bad_witness()
     test_honest_run_certifies()
     print("\nAll one-directional safety tests passed.")

@@ -26,6 +26,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import encoder_check  # noqa: E402  (claim-CNF binding for v0 combinatorics)
+import hybrid_schur_vdw_check  # noqa: E402  (finite hybrid Schur/AP exhaustive checker)
 import rup_check  # noqa: E402  (sibling module: the independent R3 checker)
 
 ATLAS_ROOT = Path(__file__).resolve().parent.parent
@@ -164,6 +165,28 @@ def check_rup_python(env: dict):
     return (CERTIFIED, f"{prefix}independent RUP agrees ({detail})") if ok else (REFUSED, detail)
 
 
+def check_hybrid_schur_vdw(env: dict):
+    """R3: exhaustive finite search for a hybrid Schur / AP coloring barrier."""
+    chk = env["checker"]
+    n = int(chk["n"])
+    colors = int(chk["colors"])
+    witness = chk.get("lower_bound_witness")
+    declared = env.get("certificate", {}).get("meta", {}).get("lower_bound_witness")
+    if declared is not None and witness != declared:
+        return REFUSED, "checker lower-bound witness differs from declared certificate metadata"
+    ok, detail, report = hybrid_schur_vdw_check.check_barrier(n, colors, witness)
+    target = report.get("target_search", {})
+    lower = report.get("lower_bound", {})
+    if ok:
+        suffix = (
+            f"nodes={target.get('nodes_visited')}, "
+            f"triples={target.get('combined_unique_triple_count')}, "
+            f"lower_witness_n={lower.get('lower_bound_witness_n')}"
+        )
+        return CERTIFIED, f"{detail}; {suffix}"
+    return REFUSED, detail
+
+
 RUNG_ORDER = ["R0", "R1", "R2", "R3", "R4", "R5"]  # strongest .. weakest
 
 
@@ -232,6 +255,7 @@ CHECKERS = {
     "lratcheck": check_lratcheck,
     "lean-axioms": check_lean_axioms,
     "rup-python": check_rup_python,
+    "hybrid-schur-vdw-exhaustive": check_hybrid_schur_vdw,
     "composed": check_composed,
     "manual": check_manual,
 }

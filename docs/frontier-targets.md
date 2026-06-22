@@ -1,81 +1,77 @@
 # Frontier Target Packet
 
-Verdict: `FRONTIER_TARGET_PACKET_READY_NEW_RESULT_NOT_CLAIMED`
+Verdict: `FIRST_FRONTIER_RESULT_EARNED_R3_NEXT_FORMALIZATION_OPEN`
 
-Recommendation: do not market Barrier Atlas as a new-math result. Market it as a
-working evidence discipline. The next substantive leap is a genuinely new or
-previously un-machine-checked certified impossibility, but that is a research
-project and must enter through the same fail-closed gate as the existing barriers.
+Recommendation: market Barrier Atlas as a working evidence discipline with one
+bounded new finite atlas result. Do not market it as a new-math priority claim.
+The next substantive leap is to strengthen the new hybrid barrier from R3
+exhaustive recomputation toward an independent SAT/LRAT certificate or a Lean
+formalization of the finite checker/spec.
 
 ## Claim Boundary
 
 This packet supports:
 
-- a ranked path toward a future new certified-impossibility entry;
-- the exact evidence required before such an entry may be promoted;
-- falsifiers that would block promotion.
+- the first new finite Barrier Atlas entry:
+  `hybrid-schur-vdw-3color-le-13`;
+- the exact evidence that earned its R3 promotion;
+- the next strengthening gates before any stronger claim is made.
 
 This packet does not support:
 
 - a new theorem;
-- a new bound;
+- a literature-priority claim;
 - a new public claim that an unsolved problem is settled;
 - any production AI-safety guarantee.
 
-## First Target Shape
+## First Earned Target
 
-Start with a finite combinatorics barrier where the complete loop is small enough
-to run publicly:
+The first target is now live:
 
-1. define a human-readable forbidden-object claim;
-2. implement the encoder in `tools/encoder_check.py`;
-3. generate a SAT/UNSAT boundary pair;
-4. produce a RUP/LRAT certificate for the UNSAT side;
-5. add an atlas envelope with sha256, parsed shape, and encoder exact-match;
-6. add a negative lower-bound witness if the claim is an exact threshold;
-7. add one fuzzer or tamper test that tries to break the new checker path.
+> Every 3-coloring of `[13]` contains either a monochromatic Schur triple
+> `x+y=z` or a monochromatic 3-term arithmetic progression.
 
-The first good candidate should be "new to this atlas" before it tries to be
-"new to mathematics." A clean, public, certificate-backed result in a neglected
-small finite family is more valuable than a speculative large target.
+Evidence:
 
-## Promotion Gate
+- checker: `tools/hybrid_schur_vdw_check.py`;
+- envelope: `barriers/hybrid-schur-vdw-3color-le-13.barrier.json`;
+- rung: `R3` exhaustive recomputation;
+- target search: no valid 3-coloring of `[13]`;
+- lower-bound witness: a valid 3-coloring of `[12]`, so the threshold is tight
+  for the declared hybrid spec;
+- boundary: new atlas-certified finite hybrid barrier, not a formal proof and
+  not a literature-priority assertion.
 
-A future frontier entry may become `live` only if all of the following pass:
+## Promotion Gate Used
+
+The frontier entry became `live` only after the following passed:
 
 | gate | requirement |
 |---|---|
-| encoder | regenerated CNF exactly matches the original clauses embedded in the cert |
-| cert bytes | sha256 pinned and matched |
-| shape | original clause count and proof-step count match the envelope |
-| checker | at least one verifier returns `CERTIFIED` |
-| refusal | at least one mutation/tamper case returns `REFUSED` |
+| finite spec | Schur triples and 3-term AP triples are generated directly from `[n]` |
+| lower witness | `[12]` witness validates against both obstruction families |
+| target search | exhaustive pruned search finds no valid coloring of `[13]` |
+| checker | `barrier_check.py` returns `CERTIFIED` through `hybrid-schur-vdw-exhaustive` |
 | claim text | statement names the exact finite object and does not imply a broader theorem |
-| provenance | command path from encoder to cert is documented |
+| provenance | discovery and checker path are documented in the envelope |
 
 ## Falsifiers
 
 Promotion is refused if:
 
-- the encoder produces the right clause count but a different ordered formula;
 - a lower-bound witness contradicts the proposed threshold;
-- the proof only verifies after manual editing that is not recorded;
-- the result depends on unpublished/private project data;
-- the claim requires a theorem stronger than the finite SAT instance proves;
-- the negative tests cannot make the checker refuse.
+- the checker finds a `[13]` coloring that avoids both obstruction families;
+- the result depends on private data or unpublished hand edits;
+- the claim requires a theorem stronger than the finite exhaustive search proves;
+- a future independent checker disagrees.
 
 ## Next Concrete Work
 
-Add `tools/frontier_probe.py` only after selecting one finite family. It should
-emit a machine-readable packet with:
+Strengthen the new hybrid barrier in one of three ways:
 
-- candidate claim;
-- encoder spec;
-- SAT/UNSAT boundary;
-- generated CNF hash;
-- proof command;
-- expected atlas rung;
-- refusal tests to add with the entry.
+1. add an independent second implementation of the finite checker;
+2. encode the hybrid spec as CNF and produce an LRAT/RUP certificate;
+3. formalize the finite checker/spec in Lean.
 
-Until then, this packet is the honest frontier status: ready to execute, not yet
-a discovery.
+Any one of these would raise confidence. Only the second or third can move the
+result toward a stronger rung.

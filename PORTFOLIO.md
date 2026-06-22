@@ -20,6 +20,10 @@ claim boundary is not earned.
   match the original clauses embedded in the bundled cert.
 - The independent Python RUP checker is guarded by deterministic mutation fuzzing
   over both bundled certificates.
+- The atlas now includes a new finite hybrid barrier: no 3-coloring of `[13]`
+  avoids both monochromatic Schur triples and monochromatic 3-term arithmetic
+  progressions, with a checked `[12]` lower-bound witness. This is an R3
+  exhaustive-computation result, not a formal-proof or literature-priority claim.
 - The composition calculus remains one-directional: a composite cannot claim a
   stronger rung than its weakest checked part.
 
@@ -30,6 +34,7 @@ Supported:
 - known finite combinatorics certificates can be replayed and cross-checked;
 - two independent implementations agree on the W(3,3) certificate;
 - cert bytes, parsed shape, and v0 combinatorics encoders are bound to the claims;
+- the finite hybrid Schur/AP barrier is exhaustively rechecked from a declared spec;
 - composed barriers propagate their weakest rung and refuse rung laundering.
 
 Not supported:

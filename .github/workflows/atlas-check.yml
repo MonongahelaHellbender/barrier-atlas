@@ -29,6 +29,9 @@ jobs:
       - name: R3 differential fuzzer
         run: python3 tools/rup_differential_fuzzer.py --cases 64
 
+      - name: Hybrid Schur-vdW finite barrier
+        run: python3 tools/hybrid_schur_vdw_check.py --n 13 --colors 3
+
       # Always-valid invariant on a bare runner: re-checking the atlas must never
       # REFUSE a live barrier. Without the Lean toolchain the lratcheck/lean-axioms
       # entries degrade to UNVERIFIABLE-HERE (exit 0); nothing should ever be REFUSED.

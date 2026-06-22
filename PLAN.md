@@ -109,8 +109,14 @@ the certificate-backed combinatorics claims.
 6. ⏭ Multi-*region* rungs (a barrier holding at different rungs on different regions;
    schema `regions: [...]` + a regional checker).
 7. ⏭ A web/`/barrier-atlas` view on the Foundation dashboard (visual negative-space map).
-8. ⏭ A genuinely new or previously un-machine-checked certified impossibility; current
-   status is a bounded frontier packet, not a result. See [`docs/frontier-targets.md`](docs/frontier-targets.md).
+8. ✅ **DONE (R3, bounded)** — first new finite atlas barrier:
+   `hybrid-schur-vdw-3color-le-13` certifies that no 3-coloring of `[13]`
+   avoids both monochromatic Schur triples and monochromatic 3-term APs, while a
+   checked `[12]` witness keeps the threshold tight for this declared spec. This
+   is an atlas-certified exhaustive-computation result, not a formal proof or
+   literature-priority claim.
+9. ⏭ Strengthen the new hybrid barrier: independent implementation, SAT/LRAT
+   certificate, or Lean formalization of the finite checker/spec.
 
 ## 5. Honest risks
 
@@ -164,3 +170,9 @@ the certificate-backed combinatorics claims.
   public index across the verification artifacts and `docs/frontier-targets.md` as
   the next-result packet. The latter is explicitly `NEW_RESULT_NOT_CLAIMED`: it
   defines the gate for a future frontier entry without pretending one has been earned.
+- **Pass 9 — first new finite atlas barrier.** Added a live R3 exhaustive checker
+  for the hybrid Schur/van der Waerden spec: avoid monochromatic Schur triples
+  `x+y=z` and monochromatic 3-term APs simultaneously. The checker validates a
+  `[12]` witness and exhaustively refuses all `[13]` colorings. The claim is new
+  to the atlas and not merely another known-value SAT replay; it remains bounded
+  as R3 because the Python checker/spec are trusted.

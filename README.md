@@ -16,7 +16,7 @@ rung**. The impossibility dual of a proof library.
 
 ## What's here (v0)
 
-Seven real barriers, re-checkable from a single envelope format across **four
+Eight real barriers, re-checkable from a single envelope format across **five
 different evidence kinds**, with the lower-rung ones honestly deferred:
 
 | barrier | claim | rung | checker | status |
@@ -25,13 +25,14 @@ different evidence kinds**, with the lower-rung ones honestly deferred:
 | `vdw-3-3-le-27-r3` | *same claim*, independent re-derivation | R3 | `rup-python` | ✅ live |
 | `ramsey-3-4-le-9` | every 2-coloring of K9 has a red K3 or blue K4 | R2 | `lratcheck` | ✅ live |
 | `nn-robust-2relu-box` | no adversarial example in [-1,1]² flips the class | R0 | `lean-axioms` | ✅ live |
+| `hybrid-schur-vdw-3color-le-13` | no 3-coloring of [13] avoids both Schur triples and 3-term APs | R3 | `hybrid-schur-vdw-exhaustive` | ✅ live |
 | `combinatorics-two-bounds` | both W(3,3)≤27 **and** R(3,4)≤9 (composed) | R2 | `composed` | ✅ live |
 | `mixed-rung-bundle` | mixed bundle — demonstrates min-trust propagation | R4 | `composed` | ⏸ deferred (propagated) |
 | `private-empirical-barrier` | an unpublished empirical barrier (details withheld) | R4 | `manual` | ⏸ deferred (honest) |
 
 ```
 $ python3 tools/barrier_check.py
-  summary: 5 certified, 0 refused, 0 unverifiable-here, 2 deferred
+  summary: 6 certified, 0 refused, 0 unverifiable-here, 2 deferred
   OK: every LIVE barrier re-checked (or honestly degraded).
 ```
 
@@ -73,6 +74,12 @@ binds:
 If any of those drift, the entry is `REFUSED`. What remains trusted is the small
 encoder-checking code itself plus the checker trusted base named by each rung.
 
+The hybrid Schur/van der Waerden entry is different: it is not a SAT certificate.
+It is a new finite atlas barrier certified by an exhaustive Python checker over
+the declared obstruction spec, plus a checked lower-bound witness for [12]. That
+makes it R3, not R2: the result is live and re-checkable, but the checker code is
+part of the trusted base.
+
 ## Layout
 
 ```
@@ -81,7 +88,7 @@ PORTFOLIO.md public reviewer-facing index across the verification artifacts
 SCHEMA.md    the envelope spec        schema/barrier.schema.json  machine schema
 barriers/    one .barrier.json per certified impossibility
 certs/       bundled certificates (sha256-pinned)
-tools/       barrier_check.py — dispatcher; rup_check.py — R3 checker; encoder_check.py — v0 CNF binding
+tools/       barrier_check.py — dispatcher; rup_check.py — R3 checker; encoder_check.py — v0 CNF binding; hybrid_schur_vdw_check.py — finite hybrid barrier checker
 tests/       one-directional safety regression tests
 docs/        composition worked-example (min-rung arithmetic)
 ```
@@ -93,6 +100,7 @@ python3 tools/barrier_check.py            # re-check every barrier
 python3 tests/test_one_directional.py     # prove the checkers fail closed
 python3 tools/encoder_check.py certs/samples_w33.cert w33
 python3 tools/rup_differential_fuzzer.py  # generated RUP certs vs lratcheck when available
+python3 tools/hybrid_schur_vdw_check.py   # new finite hybrid barrier
 ```
 
 Needs Python 3 (stdlib only). The `lratcheck` entries also need the sibling
@@ -103,7 +111,8 @@ honestly reports `UNVERIFIABLE-HERE` rather than passing. Override locations wit
 ## Status
 
 v0.1 — public and green: 4 checker kinds (`lratcheck`, `lean-axioms`, `rup-python`,
-`composed`), 7 barriers, 8 safety tests, deterministic mutation fuzzing,
-generated small-cert differential fuzzing, and v0 combinatorics encoder binding.
-See [`PLAN.md`](PLAN.md) §4 for what's left (hardened multi-region rungs, a
-dashboard view, and a genuinely new certified-impossibility target).
+`composed`, `hybrid-schur-vdw-exhaustive`), 8 barriers, 8 safety tests,
+deterministic mutation fuzzing, generated small-cert differential fuzzing, v0
+combinatorics encoder binding, and one new finite hybrid barrier. See
+[`PLAN.md`](PLAN.md) §4 for what's left (hardened multi-region rungs, a dashboard
+view, and stronger independent/formal certification for the hybrid result).

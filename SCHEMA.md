@@ -21,7 +21,7 @@ of the atlas: a claim of impossibility plus everything needed to *re-check it* a
 | `certificate.path` |  | path to the cert artifact, if any (relative to atlas root) |
 | `certificate.meta` |  | free dict (step counts, sizes, source theorem name, …) |
 | `certificate.encoder` |  | optional claim-to-CNF generator spec; when present, the parsed cert formula must exactly match the regenerated clauses |
-| `checker.kind` | ✓ | how to re-check: `lratcheck`, `lean-axioms`, `rup-python`, `composed`, or `manual` (deferred) |
+| `checker.kind` | ✓ | how to re-check: `lratcheck`, `lean-axioms`, `rup-python`, `hybrid-schur-vdw-exhaustive`, `composed`, or `manual` (deferred) |
 | `checker.*` | ✓ | kind-specific config (see below) |
 | `status` | ✓ | `"live"` (auto-checkable now) or `"deferred"` (registered, recipe given) |
 | `provenance` | ✓ | where the artifact came from (source package, generation pipeline) |
@@ -93,6 +93,20 @@ Re-checks the *same* cert with an independent from-scratch Python LRAT/RUP check
 binding. `CERTIFIED` iff the independent checker agrees. R3, not R2: you now trust
 this Python, so it sits one rung below the kernel-proved checker — its value is
 cross-implementation corroboration.
+
+### `hybrid-schur-vdw-exhaustive` (rung R3 — exhaustive finite search)
+```json
+"checker": {
+  "kind": "hybrid-schur-vdw-exhaustive",
+  "n": 13,
+  "colors": 3,
+  "lower_bound_witness": [0, 1, 0, 2, 1, 2, 2, 0, 2, 0, 1, 1]
+}
+```
+Runs `tools/hybrid_schur_vdw_check.py` on the declared finite hybrid spec:
+avoid monochromatic Schur triples `x+y=z` and monochromatic 3-term arithmetic
+progressions. It also validates the lower-bound witness when supplied. R3, not
+R2: you trust the Python exhaustive checker and the declared finite spec.
 
 ### `composed` (rung = min-trust of the parts)
 ```json
