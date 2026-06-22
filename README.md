@@ -1,15 +1,15 @@
 # Barrier Atlas
 
-**A certified, composable map of the negative space** — what provably *cannot*
-happen, each entry carrying a machine-checkable certificate at an explicit **trust
-rung**. The impossibility dual of a proof library.
+**A certified, composable map of impossibility claims** — what provably *cannot*
+happen, with each entry carrying a machine-checkable certificate at an explicit
+**trust rung**. The impossibility-oriented counterpart to a proof library.
 
 > Sister project to [`lean-verification-journey`](https://github.com/MonongahelaHellbender/lean-verification-journey).
 > The thesis there is *verification is the durable skill*. This is its negative
 > image: most claims you actually want from AI ("there is **no** input that leaks
 > the secret") are *impossibilities*, and an impossibility needs a certificate, not
-> a demo. A proved barrier is also the rare kind of knowledge that **compounds and
-> never decays** — true forever, pruning the search tree for anyone who comes later.
+> a demo. A proved barrier is durable knowledge: once checked, it permanently
+> removes a region of the search space from consideration.
 >
 > For a reviewer-facing map of the surrounding public work, see
 > [`PORTFOLIO.md`](PORTFOLIO.md).

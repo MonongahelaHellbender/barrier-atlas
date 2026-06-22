@@ -1,16 +1,16 @@
 # Verification Portfolio Index
 
 This is the public, reviewer-facing map of the verification work around Barrier
-Atlas. The theme is deliberately narrow: replace "trust me, I checked" with
-claims that name their trusted base, re-run their evidence, and refuse when a
-claim boundary is not earned.
+Atlas. The theme is deliberately narrow: replace informal assurance with claims
+that name their trusted base, re-run their evidence, and refuse when a claim
+boundary is not earned.
 
 ## Public Artifacts
 
 | artifact | what it demonstrates | strongest honest claim | link |
 |---|---|---|---|
 | Barrier Atlas | A shared envelope for certified impossibilities, independent checkers, min-trust composition, and fail-closed negative tests. | A working protocol demo for checkable negative knowledge, not a production safety guarantee. | <https://github.com/MonongahelaHellbender/barrier-atlas> |
-| Lean Verification Journey | Lean 4 proofs, a compiled LRAT checker, public CI, and reproducible certificate checks for known finite combinatorics and a toy NN robustness theorem. | Formal/computer-assisted verification skill on known results and bounded toy properties. | <https://github.com/MonongahelaHellbender/lean-verification-journey> |
+| Lean Verification Journey | Lean 4 proofs, a compiled LRAT checker, public CI, and reproducible certificate checks for known finite combinatorics and a bounded NN robustness theorem. | Formal/computer-assisted verification skill on known results and bounded example properties. | <https://github.com/MonongahelaHellbender/lean-verification-journey> |
 | Certified Combinatorics Verification | A self-contained SAT/RUP pipeline for known Schur and van der Waerden values, with self-verified witnesses and optional formally checked layers. | Reproducible certification machinery for known values, not new mathematics. | <https://github.com/MonongahelaHellbender/certified-combinatorics-verification> |
 
 ## What Changed After Public Release
