@@ -219,6 +219,32 @@ def test_claim_stress_llm_review_disclosed_weaker():
     print("PASS  claim-stress llm sign-off -> CERTIFIED but disclosed as weaker")
 
 
+def test_empirical_r4_through_composition():
+    """A CERTIFIED claim-stress R4 is a first-class min-trust input; the formal R2
+    co-part cannot launder the composite above R4."""
+    env = json.loads((ROOT / "barriers" / "empirical-and-combinatorial-bundle.barrier.json").read_text())
+    rc, out = _run(env, "empcompose")
+    if "UNVERIFIABLE-HERE" in out:                       # lratcheck sub absent on a bare runner
+        print("SKIP  R4-through-composition (toolchain absent here)")
+        return
+    assert rc == 0 and "CERTIFIED" in out and "min-trust R4" in out, out
+    env["rung"]["level"] = "R2"                           # the LIE: claim formal-strength over an R4 part
+    rc2, out2 = _run(env, "empcomposeR2")
+    assert rc2 == 1 and "REFUSED" in out2 and "CERTIFIED" not in out2, out2
+    print("PASS  R4 flows through composition; declaring it R2 -> REFUSED")
+
+
+def test_review_calibration_reports_false_accept():
+    """The calibration artifact must surface the false-accept risk it documents:
+    on the adversarial seed the llm reviewer is fooled, so it is not gate-safe."""
+    sys.path.insert(0, str(ROOT / "tools"))
+    import review_calibration as rc
+    s = rc.score(rc.load(ROOT / "data" / "review_calibration_seed.jsonl"))
+    assert s["false_accept"] >= 1 and s["llm_safe_as_gate"] is False, s
+    print(f"PASS  review calibration surfaces false-accept={s['false_accept']} "
+          f"(rate {s['false_accept_rate']}) -> llm not gate-safe")
+
+
 def test_honest_run_certifies():
     """The real, unmodified entries must still certify (no false negatives)."""
     r = subprocess.run([PY, CHECK], capture_output=True, text=True)
@@ -241,5 +267,7 @@ if __name__ == "__main__":
     test_claim_stress_weak_answer_refused()
     test_claim_stress_named_signoff_certifies()
     test_claim_stress_llm_review_disclosed_weaker()
+    test_empirical_r4_through_composition()
+    test_review_calibration_reports_false_accept()
     test_honest_run_certifies()
     print("\nAll one-directional safety tests passed.")

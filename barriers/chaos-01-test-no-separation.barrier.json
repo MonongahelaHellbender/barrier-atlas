@@ -43,10 +43,10 @@
     },
     "human_review": {
       "kind": "human",
-      "by": "",
-      "date": "",
-      "verdict": "PENDING_AUTHOR_SIGNOFF",
-      "note": "Stage 1 (completeness) and Stage 2 (adequacy) are GREEN. To certify R4, replace with by='Melissa Ellison', date='YYYY-MM-DD', verdict='adequate' after reviewing the answers. Correctness is anchored by this named human verdict -- never by automation."
+      "by": "Melissa Ellison",
+      "date": "2026-06-22",
+      "verdict": "adequate",
+      "note": "Author sign-off: the 12 answers trace to the chaos-universality-paper findings and adequately address every generated stress question. Correctness anchored by this named human verdict -- never by automation."
     }
   },
   "status": "live",

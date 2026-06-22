@@ -1,0 +1,35 @@
+{
+  "id": "empirical-and-combinatorial-bundle",
+  "schema_version": "0.1",
+  "claim": {
+    "statement": "Both the chaos 0-1-test no-separation barrier (R4 empirical) and W(3,3) <= 27 (R2 formal) hold -- a composite that carries a CERTIFIED empirical R4 barrier through the min-trust calculus as a first-class input.",
+    "kind": "impossibility",
+    "negation_of": "a counterexample to either the chaos 0-1-test no-go or W(3,3) <= 27"
+  },
+  "domain": "composite/empirical-plus-formal",
+  "rung": {
+    "level": "R4",
+    "name": "empirical-robust",
+    "trusted_base": [
+      "min-trust = max(R4 empirical, R2 formal, step R0) = R4",
+      "the composite is exactly as strong as its weakest certified part: the empirical R4 barrier (named human sign-off + stress contract) caps it"
+    ]
+  },
+  "certificate": {
+    "kind": "composition",
+    "meta": { "demonstrates": "a CERTIFIED claim-stress R4 barrier is a first-class min-trust input; the formal R2 part cannot launder the composite above the empirical R4 link" }
+  },
+  "checker": {
+    "kind": "composed",
+    "composition": {
+      "sub_barriers": ["chaos-01-test-no-separation", "vdw-3-3-le-27"],
+      "step": { "rung": "R0", "description": "conjunction of a CERTIFIED R4 empirical barrier and a CERTIFIED R2 formal barrier" }
+    }
+  },
+  "status": "live",
+  "provenance": {
+    "source_package": "barrier-atlas (composition)",
+    "pipeline": "recursively re-checks both sub-barriers (the R4 re-runs its full claim-stress contract incl. the named sign-off); declared rung must equal the weakest = R4"
+  },
+  "one_directional": "CERTIFIED only if BOTH parts re-certify AND the declared rung equals the weakest (R4). If the chaos R4 sign-off were withdrawn, that sub becomes DEFERRED and the whole composite propagates DEFERRED -- a formal R2 part can never launder an empirical bundle up to R2."
+}
