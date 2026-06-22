@@ -119,6 +119,17 @@ def test_rup_python_deterministic_mutation_fuzzer():
     print(f"PASS  deterministic RUP mutation fuzzer refused {cases} mutated proofs")
 
 
+def test_rup_python_differential_fuzzer():
+    """Random small generated certs must agree with lratcheck when available."""
+    r = subprocess.run(
+        [PY, str(ROOT / "tools" / "rup_differential_fuzzer.py"), "--cases", "32"],
+        capture_output=True,
+        text=True,
+    )
+    assert r.returncode == 0, r.stdout + r.stderr
+    print(r.stdout.strip())
+
+
 def test_honest_run_certifies():
     """The real, unmodified entries must still certify (no false negatives)."""
     r = subprocess.run([PY, CHECK], capture_output=True, text=True)
@@ -133,5 +144,6 @@ if __name__ == "__main__":
     test_rup_python_refuses_broken_proof()
     test_encoder_lie_refused()
     test_rup_python_deterministic_mutation_fuzzer()
+    test_rup_python_differential_fuzzer()
     test_honest_run_certifies()
     print("\nAll one-directional safety tests passed.")

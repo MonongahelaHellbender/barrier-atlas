@@ -56,7 +56,8 @@ $ python3 tools/barrier_check.py
    *closed*. This is the same asymmetric safety the barriers themselves have, and it's
    regression-guarded in [`tests/test_one_directional.py`](tests/test_one_directional.py)
    (7 tests, incl. rung-laundering, encoder-lie refusal, and deterministic RUP
-   mutation fuzzing).
+   mutation fuzzing and generated small-cert differential fuzzing against
+   `lratcheck` when the sibling binary is available).
 
 ## Trust boundary (stated, not hidden)
 
@@ -91,6 +92,7 @@ docs/        composition worked-example (min-rung arithmetic)
 python3 tools/barrier_check.py            # re-check every barrier
 python3 tests/test_one_directional.py     # prove the checkers fail closed
 python3 tools/encoder_check.py certs/samples_w33.cert w33
+python3 tools/rup_differential_fuzzer.py  # generated RUP certs vs lratcheck when available
 ```
 
 Needs Python 3 (stdlib only). The `lratcheck` entries also need the sibling
@@ -101,6 +103,7 @@ honestly reports `UNVERIFIABLE-HERE` rather than passing. Override locations wit
 ## Status
 
 v0.1 — public and green: 4 checker kinds (`lratcheck`, `lean-axioms`, `rup-python`,
-`composed`), 7 barriers, 7 safety tests, and v0 combinatorics encoder binding.
+`composed`), 7 barriers, 8 safety tests, deterministic mutation fuzzing,
+generated small-cert differential fuzzing, and v0 combinatorics encoder binding.
 See [`PLAN.md`](PLAN.md) §4 for what's left (hardened multi-region rungs, a
 dashboard view, and a genuinely new certified-impossibility target).
