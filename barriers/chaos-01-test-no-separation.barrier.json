@@ -1,0 +1,58 @@
+{
+  "id": "chaos-01-test-no-separation",
+  "schema_version": "0.1",
+  "claim": {
+    "statement": "The 0-1 test for chaos does not separate conservative (Hamiltonian) from dissipative dynamical systems; the discriminator is phase-space volume contraction (Sigma-lambda = sum of Lyapunov exponents: 0 for Hamiltonian, <0 for dissipative).",
+    "kind": "impossibility",
+    "negation_of": "a 0-1 test statistic that reliably classifies conservative vs dissipative chaos"
+  },
+  "domain": "dynamical-systems/chaos-classification",
+  "rung": {
+    "level": "R4",
+    "name": "empirical-robust",
+    "trusted_base": [
+      "a structured stress contract: every generated stress question answered AND adequacy-screened (cites concrete evidence, non-circular)",
+      "the empirical evidence cited in each answer (Sigma-lambda across 8 Hamiltonian + 11 dissipative systems; Green-Kubo r=0.955; the retracted short-trajectory artifact)",
+      "a NAMED human sign-off on answer correctness -- the irreducible anchor, never automated"
+    ]
+  },
+  "certificate": {
+    "kind": "stress-contract",
+    "meta": {
+      "source_paper": "chaos-universality-paper",
+      "note": "every answer traces to the published findings"
+    }
+  },
+  "checker": {
+    "kind": "claim-stress",
+    "claim_text": "The 0-1 test for chaos does not separate conservative (Hamiltonian) from dissipative dynamical systems; only phase-space volume contraction separates them.",
+    "declared_rung": "R4",
+    "stress_answers": {
+      "energy_order::What maintains order?": "In a conservative (Hamiltonian) system phase-space volume is exactly preserved (Liouville's theorem): Sigma-lambda = 0. Nothing external maintains it; the dynamics conserve it.",
+      "energy_order::Where is energy entering?": "The studied systems are autonomous in steady state; the discriminating flow is phase-space volume contraction (Sigma-lambda), not energy input. This is exactly the contraction the 0-1 K-statistic does not measure.",
+      "energy_order::Where is energy being lost?": "Dissipative systems contract phase-space volume at rate Sigma-lambda < 0 (sum of Lyapunov exponents); Hamiltonian systems have Sigma-lambda = 0. Measured across 11 dissipative (Sigma-lambda<0) and 8 Hamiltonian (Sigma-lambda=0) systems.",
+      "energy_order::What happens when maintenance stops?": "Not applicable to these autonomous systems; the conservative/dissipative split is a structural volume-contraction property (Sigma-lambda), independent of any maintenance process -- and the 0-1 statistic is blind to it.",
+      "model_degeneracy::Do other models predict the same observations?": "Yes, and that is the finding: the 0-1 test and Sigma-lambda disagree on the separation, and Sigma-lambda is the one that holds. The Green-Kubo closed form predicts the 0-1 curve (r=0.955), showing the 0-1 signal tracks a mixing-rate quantity, not conservation.",
+      "model_degeneracy::What independent observable would distinguish between models?": "Sigma-lambda = sum of Lyapunov exponents (phase-space volume contraction): exactly 0 for Hamiltonian, strictly < 0 for dissipative. Conservation-grounded and independent of the 0-1 K-statistic.",
+      "model_degeneracy::How many free parameters were fitted?": "Zero in the Sigma-lambda discriminator (read directly from the Lyapunov spectrum). The retracted 0-1 separation carried one hidden parameter: trajectory length.",
+      "model_degeneracy::Has the model been tested on data not used to tune it?": "Yes -- this is the crux. The original 0-1 separation was a SHORT-TRAJECTORY ARTIFACT that vanished on longer trajectories and was retracted. Sigma-lambda was verified across 8 Hamiltonian (Sigma-lambda=0), 11 dissipative (Sigma-lambda<0), and Mackey-Glass (delay system; Sigma-lambda correctly nan).",
+      "hidden_variable::What variable is not being measured?": "Trajectory length -- the hidden variable behind the spurious 0-1 separation; the K-statistic conflated transient mixing with conservation.",
+      "hidden_variable::What assumption may be false?": "The assumption that the 0-1 growth statistic reflects conservation. It reflects mixing rate, not phase-space volume behavior; this is what the retraction corrected.",
+      "hidden_variable::What would explain the contradiction?": "Sigma-lambda explains it: conservation is a volume-contraction property (0 vs <0) that the 0-1 test does not measure. Green-Kubo links the 0-1 curve to a dynamical (not conservation) quantity, r=0.955.",
+      "hidden_variable::What data would reveal the missing variable?": "Trajectory / run-length sweeps: the 0-1 separation degrades with length (documented in the run-length calculator appendix), while Sigma-lambda is stable under the same sweeps."
+    },
+    "human_review": {
+      "kind": "human",
+      "by": "",
+      "date": "",
+      "verdict": "PENDING_AUTHOR_SIGNOFF",
+      "note": "Stage 1 (completeness) and Stage 2 (adequacy) are GREEN. To certify R4, replace with by='Melissa Ellison', date='YYYY-MM-DD', verdict='adequate' after reviewing the answers. Correctness is anchored by this named human verdict -- never by automation."
+    }
+  },
+  "status": "live",
+  "provenance": {
+    "source_package": "chaos-universality-paper",
+    "pipeline": "claim -> claim_bridge stress questions -> answered from the paper's findings -> adequacy screen -> named human sign-off"
+  },
+  "one_directional": "claim-stress can only REFUSE (an unanswered or weak/dodging answer) or DEFER (no named human sign-off); it can never grant R4 from automation alone. Answer correctness is anchored by a named human reviewer -- automating that verdict with a model would be rung-laundering, the one move the atlas refuses."
+}

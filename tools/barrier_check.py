@@ -28,6 +28,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import encoder_check  # noqa: E402  (claim-CNF binding for v0 combinatorics)
 import hybrid_schur_vdw_check  # noqa: E402  (finite hybrid Schur/AP exhaustive checker)
 import rup_check  # noqa: E402  (sibling module: the independent R3 checker)
+import claim_stress_check  # noqa: E402  (R4/R5 empirical-rung stress-contract engine)
 
 ATLAS_ROOT = Path(__file__).resolve().parent.parent
 
@@ -247,6 +248,13 @@ def check_composed(env: dict):
     return CERTIFIED, f"min-trust {weakest} from {chain}"
 
 
+def check_claim_stress(env: dict):
+    """R4/R5: the three-stage empirical-rung contract (completeness -> adequacy ->
+    named human/llm correctness gate). One-directional: can only refuse or defer,
+    never grant a rung from automation alone. Returns the same status vocabulary."""
+    return claim_stress_check.evaluate(env)
+
+
 def check_manual(env: dict):
     return DEFERRED, env["checker"].get("promote_recipe", "(no recipe given)")
 
@@ -257,6 +265,7 @@ CHECKERS = {
     "rup-python": check_rup_python,
     "hybrid-schur-vdw-exhaustive": check_hybrid_schur_vdw,
     "composed": check_composed,
+    "claim-stress": check_claim_stress,
     "manual": check_manual,
 }
 

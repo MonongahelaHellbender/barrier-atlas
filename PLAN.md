@@ -128,10 +128,11 @@ the certificate-backed combinatorics claims.
 
 ## 5. Honest risks
 
-- **Adjudication creep.** Lower rungs (R3–R5) are judgment calls. Mitigation:
-  keep R3 live only when it is an explicit independent recomputation, keep R4+
-  entries registered/deferred unless they have an automated checker, and require
-  refusal tests for every new checker path.
+- **Adjudication creep.** Lower rungs (R3–R5) were judgment calls. **Addressed** by
+  the `claim-stress` engine (`docs/claim-stress-integration.md`): R4/R5 are now a
+  three-stage contract — completeness → adequacy → a *named* human/llm sign-off —
+  that can only refuse or defer, never grant a rung from automation. R3 stays an
+  explicit independent recomputation; every checker path has refusal tests.
 - **Solo maintenance.** Each entry needs a real artifact. Mitigation: seed only from
   results that already exist and are already certified elsewhere.
 - **"Just a registry" critique.** The novelty is the *rung calculus + heterogeneity*,

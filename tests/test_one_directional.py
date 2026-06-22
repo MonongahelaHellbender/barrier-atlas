@@ -175,6 +175,50 @@ def test_hybrid_schur_vdw_certifies_and_refuses_bad_witness():
     print("PASS  hybrid Schur-vdW certifies and rejects a bad lower witness")
 
 
+def _chaos_env():
+    return json.loads((ROOT / "barriers" / "chaos-01-test-no-separation.barrier.json").read_text())
+
+
+def test_claim_stress_incomplete_refused():
+    """Stage 1: an unanswered stress question must REFUSE (completeness contract)."""
+    env = _chaos_env()
+    k = next(iter(env["checker"]["stress_answers"]))
+    env["checker"]["stress_answers"][k] = ""          # blank one answer
+    rc, out = _run(env, "stressincomplete")
+    assert rc == 1 and "completeness" in out and "CERTIFIED" not in out, out
+    print("PASS  claim-stress incomplete answer -> REFUSED (completeness)")
+
+
+def test_claim_stress_weak_answer_refused():
+    """Stage 2: a vague/dodging answer with no concrete evidence must REFUSE."""
+    env = _chaos_env()
+    k = next(iter(env["checker"]["stress_answers"]))
+    env["checker"]["stress_answers"][k] = "Yes, this has been carefully checked and is fine."
+    rc, out = _run(env, "stressweak")
+    assert rc == 1 and "adequacy" in out and "CERTIFIED" not in out, out
+    print("PASS  claim-stress dodging answer -> REFUSED (adequacy)")
+
+
+def test_claim_stress_named_signoff_certifies():
+    """Stage 3: a NAMED human sign-off flips the satisfied contract to CERTIFIED."""
+    env = _chaos_env()
+    env["checker"]["human_review"] = {"kind": "human", "by": "Test Reviewer",
+                                      "date": "2026-06-22", "verdict": "adequate"}
+    rc, out = _run(env, "stresssignoff")
+    assert rc == 0 and "CERTIFIED" in out and "human sign-off by Test Reviewer" in out, out
+    print("PASS  claim-stress named human sign-off -> CERTIFIED")
+
+
+def test_claim_stress_llm_review_disclosed_weaker():
+    """An llm sign-off is allowed but must be disclosed as weaker -- never wear the human badge."""
+    env = _chaos_env()
+    env["checker"]["human_review"] = {"kind": "llm", "by": "some-model",
+                                      "date": "2026-06-22", "verdict": "adequate"}
+    rc, out = _run(env, "stressllm")
+    assert rc == 0 and "llm-reviewed" in out and "weaker than human" in out, out
+    print("PASS  claim-stress llm sign-off -> CERTIFIED but disclosed as weaker")
+
+
 def test_honest_run_certifies():
     """The real, unmodified entries must still certify (no false negatives)."""
     r = subprocess.run([PY, CHECK], capture_output=True, text=True)
@@ -193,5 +237,9 @@ if __name__ == "__main__":
     test_rup_python_deterministic_mutation_fuzzer()
     test_rup_python_differential_fuzzer()
     test_hybrid_schur_vdw_certifies_and_refuses_bad_witness()
+    test_claim_stress_incomplete_refused()
+    test_claim_stress_weak_answer_refused()
+    test_claim_stress_named_signoff_certifies()
+    test_claim_stress_llm_review_disclosed_weaker()
     test_honest_run_certifies()
     print("\nAll one-directional safety tests passed.")

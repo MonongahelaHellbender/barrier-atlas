@@ -113,9 +113,12 @@ honestly reports `UNVERIFIABLE-HERE` rather than passing. Override locations wit
 
 ## Status
 
-v0.2 — public and green: 5 checker kinds (`lratcheck`, `lean-axioms`, `rup-python`,
-`composed`, `hybrid-schur-vdw-exhaustive`), 9 barriers, 11 safety tests,
-deterministic mutation fuzzing, generated small-cert differential fuzzing, v0
-combinatorics encoder binding, and one finite hybrid barrier certified two ways
-(R2 CNF/RUP plus R3 exhaustive recomputation). See [`PLAN.md`](PLAN.md) §4 for
-what's left: formalization, multi-region rungs, and a dashboard view.
+v0.3 — public and green: 6 checker kinds (`lratcheck`, `lean-axioms`, `rup-python`,
+`hybrid-schur-vdw-exhaustive`, `composed`, and `claim-stress` — the **empirical-rung
+engine**), 10 barriers, 15 safety tests, deterministic mutation fuzzing, generated
+small-cert differential fuzzing, v0 combinatorics encoder binding, one finite hybrid
+barrier certified three ways (R2 CNF/RUP + R3 exhaustive + Lean 4), and the first
+**R4 empirical barrier** (the chaos 0-1-test no-go) gated by a three-stage stress
+contract — completeness → adequacy → **named** human/llm sign-off, never automated
+correctness (see [`docs/claim-stress-integration.md`](docs/claim-stress-integration.md)).
+See [`PLAN.md`](PLAN.md) §4 for what's left: multi-region rungs and a dashboard view.
