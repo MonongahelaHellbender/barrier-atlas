@@ -53,5 +53,5 @@
     "source_package": "barrier-atlas",
     "pipeline": "deterministic hybrid CNF encoder -> prefix-blocking RUP proof generator -> rup_check self-check -> lratcheck"
   },
-  "one_directional": "The Lean-proved checker can never falsely certify a parsed CNF as UNSAT; a parser or proof-generation bug only causes refusal. The atlas binds exact cert bytes by sha256, cross-checks parsed clause/step counts, and regenerates the hybrid Schur/vdW CNF from the declared encoder spec before invoking lratcheck. This is a new atlas-certified finite result, not a literature-priority claim and not yet a Lean-formalized combinatorics theorem."
+  "one_directional": "The Lean-proved checker can never falsely certify a parsed CNF as UNSAT; a parser or proof-generation bug only causes refusal. The atlas binds exact cert bytes by sha256, cross-checks parsed clause/step counts, and regenerates the hybrid Schur/vdW CNF from the declared encoder spec before invoking lratcheck. This is a new atlas-certified finite result (also Lean-formalized as hybrid13_no_avoiding_coloring in lean-verification-journey), not a literature-priority claim."
 }

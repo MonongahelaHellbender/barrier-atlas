@@ -42,8 +42,9 @@ Evidence:
 - target search: no valid 3-coloring of `[13]`;
 - lower-bound witness: a valid 3-coloring of `[12]`, so the threshold is tight
   for the declared hybrid spec;
-- boundary: new atlas-certified finite hybrid barrier, not a Lean-formalized
-  theorem and not a literature-priority assertion.
+- boundary: new atlas-certified finite hybrid barrier. Now also Lean-formalized
+  (`hybrid13_no_avoiding_coloring` in lean-verification-journey, with a pure-kernel
+  semantic bridge + `native_decide` UNSAT replay). Not a literature-priority assertion.
 
 ## Promotion Gate Used
 

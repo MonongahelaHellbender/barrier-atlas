@@ -22,9 +22,13 @@ boundary is not earned.
   over both bundled certificates.
 - The atlas now includes a new finite hybrid barrier: no 3-coloring of `[13]`
   avoids both monochromatic Schur triples and monochromatic 3-term arithmetic
-  progressions, with a checked `[12]` lower-bound witness. This now has an R2
-  CNF/RUP certificate accepted by `lratcheck` plus an R3 exhaustive recomputation.
-  It is still not a Lean-formalized theorem or literature-priority claim.
+  progressions, with a checked `[12]` lower-bound witness. It is certified three
+  independent ways: an R2 CNF/RUP certificate accepted by `lratcheck`, an R3
+  exhaustive recomputation, and a Lean 4 formalization
+  (`hybrid13_no_avoiding_coloring : ¬ ∃ w, HybridAvoids w 13 3`) — a machine-checked
+  semantic bridge from the combinatorial spec to the CNF (pure kernel) plus the
+  UNSAT replay (`native_decide`, like the existing `w24`/`w33` entries). It is a
+  new atlas-certified finite result, not a literature-priority claim.
 - The composition calculus remains one-directional: a composite cannot claim a
   stronger rung than its weakest checked part.
 
