@@ -248,6 +248,38 @@ def check_composed(env: dict):
     return CERTIFIED, f"min-trust {weakest} from {chain}"
 
 
+def check_multi_region(env: dict):
+    """One claim, domain partitioned into REGIONS, each with its own inline checker
+    and rung (e.g. rigorous R2 on a threshold, only R5-argued on the tail). The
+    barrier earns the WEAKEST region's rung (min-trust). CERTIFIED only if every
+    region certifies AND the declared rung equals the weakest. Any failed/deferred
+    region propagates -- a strong region cannot launder a weak one up."""
+    regions = env["checker"]["regions"]
+    results = []  # (name, rung, status, detail)
+    for r in regions:
+        mini = {
+            "id": f"{env['id']}#{r.get('region', '?')}",
+            "rung": {"level": r["rung"]},
+            "checker": r["checker"],
+            "certificate": r.get("certificate", {}),
+        }
+        st, detail = run(mini)
+        results.append((r.get("region", "?"), r["rung"], st, detail))
+    chain = "; ".join(f"{n}={rg}:{st}" for n, rg, st, _ in results)
+    # one-directional: any non-certified region propagates the most severe status
+    for sev in (REFUSED, UNVERIFIABLE, DEFERRED):
+        hit = next((x for x in results if x[2] == sev), None)
+        if hit:
+            return sev, f"region '{hit[0]}' ({hit[1]}) is {sev}: {hit[3]} | regions: {chain}"
+    weakest = None
+    for _, rg, _, _ in results:
+        weakest = rg if weakest is None else _weaker(weakest, rg)
+    declared = env["rung"]["level"]
+    if declared != weakest:
+        return REFUSED, f"declared {declared} != min-trust {weakest} across regions ({chain})"
+    return CERTIFIED, f"min-trust {weakest} across regions: {chain}"
+
+
 def check_claim_stress(env: dict):
     """R4/R5: the three-stage empirical-rung contract (completeness -> adequacy ->
     named human/llm correctness gate). One-directional: can only refuse or defer,
@@ -265,6 +297,7 @@ CHECKERS = {
     "rup-python": check_rup_python,
     "hybrid-schur-vdw-exhaustive": check_hybrid_schur_vdw,
     "composed": check_composed,
+    "multi-region": check_multi_region,
     "claim-stress": check_claim_stress,
     "manual": check_manual,
 }

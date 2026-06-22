@@ -234,6 +234,36 @@ def test_empirical_r4_through_composition():
     print("PASS  R4 flows through composition; declaring it R2 -> REFUSED")
 
 
+def test_multi_region_min_trust():
+    """A multi-region barrier earns the weakest region's rung; a strong region
+    cannot launder the claim up."""
+    vdw = json.loads((ROOT / "barriers" / "vdw-3-3.barrier.json").read_text())
+    ram = json.loads((ROOT / "barriers" / "ramsey-3-4.barrier.json").read_text())
+    env = {
+        "id": "_mr_test", "schema_version": "0.1",
+        "claim": {"statement": "two R2 regions of one claim", "kind": "impossibility",
+                  "negation_of": "a counterexample in either region"},
+        "domain": "test/multi-region", "rung": {"level": "R2", "name": "multi-region",
+                                                "trusted_base": ["min-trust across regions"]},
+        "certificate": {"kind": "multi-region"},
+        "checker": {"kind": "multi-region", "regions": [
+            {"region": "A", "rung": "R2", "checker": vdw["checker"], "certificate": vdw["certificate"]},
+            {"region": "B", "rung": "R2", "checker": ram["checker"], "certificate": ram["certificate"]},
+        ]},
+        "status": "live", "provenance": {"source_package": "test"},
+        "one_directional": "test fixture",
+    }
+    rc, out = _run(env, "multiregion")
+    if "UNVERIFIABLE-HERE" in out:                       # lratcheck regions need the toolchain
+        print("SKIP  multi-region (toolchain absent here)")
+        return
+    assert rc == 0 and "CERTIFIED" in out and "min-trust R2" in out, out
+    env["rung"]["level"] = "R0"                           # the LIE: claim kernel-strength over R2 regions
+    rc2, out2 = _run(env, "multiregionR0")
+    assert rc2 == 1 and "REFUSED" in out2 and "declared R0 != min-trust R2" in out2, out2
+    print("PASS  multi-region min-trust R2; declaring R0 -> REFUSED")
+
+
 def test_review_calibration_reports_false_accept():
     """The calibration artifact must surface the false-accept risk it documents:
     on the adversarial seed the llm reviewer is fooled, so it is not gate-safe."""
@@ -268,6 +298,7 @@ if __name__ == "__main__":
     test_claim_stress_named_signoff_certifies()
     test_claim_stress_llm_review_disclosed_weaker()
     test_empirical_r4_through_composition()
+    test_multi_region_min_trust()
     test_review_calibration_reports_false_accept()
     test_honest_run_certifies()
     print("\nAll one-directional safety tests passed.")

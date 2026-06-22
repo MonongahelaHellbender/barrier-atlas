@@ -123,8 +123,10 @@ the certificate-backed combinatorics claims.
 9. ✅ **DONE (R2 certificate)** — strengthened the same hybrid finite result with
    a deterministic CNF encoder, prefix-blocking RUP proof generator, bundled flat
    certificate, exact encoder binding, and `lratcheck` acceptance.
-10. ⏭ Formalize the hybrid finite checker/spec in Lean, or add multi-region rung
-   machinery. Do not claim a Lean theorem until this gate exists.
+10. ✅ **DONE** — multi-region rung machinery (`multi-region` checker): one claim,
+   domain partitioned, earns the weakest region's rung; one-directional, tested. Live
+   example `hybrid-unavoidable-all-N` (R2 threshold + R5 un-formalized tail → DEFERRED).
+   *(The hybrid finite result is also separately Lean-formalized; see lean-verification-journey.)*
 
 ## 5. Honest risks
 

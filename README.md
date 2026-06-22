@@ -113,15 +113,16 @@ honestly reports `UNVERIFIABLE-HERE` rather than passing. Override locations wit
 
 ## Status
 
-v0.4 — public and green: 6 checker kinds (`lratcheck`, `lean-axioms`, `rup-python`,
-`hybrid-schur-vdw-exhaustive`, `composed`, `claim-stress` — the **empirical-rung
-engine**), 11 barriers, 17 safety tests. Highlights: a finite hybrid barrier certified
-three ways (R2 CNF/RUP + R3 exhaustive + Lean 4); the **first CERTIFIED R4 empirical
-barrier** (the chaos 0-1-test no-go), gated by a three-stage stress contract —
-completeness → adequacy → a **named** human sign-off, never automated correctness
-([`docs/claim-stress-integration.md`](docs/claim-stress-integration.md)); that R4
-barrier flows through the **min-trust composition** calculus as a first-class input
-(`empirical-and-combinatorial-bundle`); and a **review-calibration** artifact that
-measures llm-vs-human false-accept rate — empirically justifying why correctness stays
-human ([`docs/review-calibration.md`](docs/review-calibration.md)). See [`PLAN.md`](PLAN.md)
-§4 for what's left: multi-region rungs and a dashboard view.
+v0.5 — public and green: 7 checker kinds (`lratcheck`, `lean-axioms`, `rup-python`,
+`hybrid-schur-vdw-exhaustive`, `composed`, `multi-region`, `claim-stress`), 12 barriers,
+18 safety tests. Highlights: a finite hybrid barrier certified three ways (R2 CNF/RUP +
+R3 exhaustive + Lean 4); the **first CERTIFIED R4 empirical barrier** (the chaos
+0-1-test no-go), gated by a three-stage stress contract — completeness → adequacy → a
+**named** human sign-off, never automated correctness
+([`docs/claim-stress-integration.md`](docs/claim-stress-integration.md)); that R4 flows
+through the **min-trust composition** calculus as a first-class input; **multi-region
+rungs** — one claim partitioned into regions, each at its own rung, earning the weakest
+([`docs/composition-example.md`](docs/composition-example.md)); and a **review-calibration**
+artifact measuring llm-vs-human false-accept rate, justifying why correctness stays human
+([`docs/review-calibration.md`](docs/review-calibration.md)). See [`PLAN.md`](PLAN.md) §4
+for what's left: a dashboard / visual negative-space map.

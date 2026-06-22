@@ -50,13 +50,24 @@ The two failure modes this prevents:
    "and therefore C" is at best R5. The rule makes the glue carry a rung too, so an
    informal join can't silently upgrade a chain of formal parts.
 
-## Partial / regional barriers
+## Partial / regional barriers — LIVE (`multi-region`)
 
-A barrier can hold at **different rungs on different regions** — e.g. a barrier
-that is rigorous on a subspace but only R4-numerical elsewhere. The envelope would
-carry a `regions: [{domain, rung}, …]` list, and
-the *overall* rung is the min across regions. v0 represents this only narratively in
-the deferred entry; the regional schema and its checker are roadmap (PLAN.md §4.3).
+A barrier can hold at **different rungs on different regions** of its domain — rigorous
+on one part, only argued on another. This is now **built**: the `multi-region` checker
+takes a `checker.regions: [{region, rung, checker, certificate?}, …]` list, runs each
+region's own inline checker, and the barrier earns the **min-trust (weakest) region's
+rung**. Any failed/deferred region propagates; a strong region cannot launder a weak one up.
+
+Worked live example: [`hybrid-unavoidable-all-N`](../barriers/hybrid-unavoidable-all-N.barrier.json)
+— *"the hybrid Schur/vdW obstruction is unavoidable for all N ≥ 13."*
+- region `threshold-N13` (**R2**): re-checks the real hybrid cert via `lratcheck` → CERTIFIED.
+- region `tail-N≥14` (**R5**): a stated monotonicity argument (any 3-coloring of {1..N}
+  restricts to {1..13}, which is forced), **not yet formalized** → DEFERRED.
+
+So the universal-over-N claim is honestly **DEFERRED**, not R2 — bulletproof at the
+threshold yet only as strong as its un-formalized tail. Formalizing the one-line
+restriction lemma promotes the whole barrier to R2. That is the anti-overclaim lesson
+made mechanical: a claim is exactly as trustworthy as its weakest region.
 
 ## What an automated checker would do
 

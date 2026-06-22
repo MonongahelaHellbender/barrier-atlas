@@ -1,0 +1,78 @@
+{
+  "id": "hybrid-unavoidable-all-N",
+  "schema_version": "0.1",
+  "claim": {
+    "statement": "The hybrid Schur/van der Waerden obstruction is unavoidable for ALL N >= 13 with 3 colors: no 3-coloring of {1..N} avoids both monochromatic Schur triples (x+y=z) and monochromatic 3-term arithmetic progressions, for any N >= 13.",
+    "kind": "impossibility",
+    "negation_of": "an N >= 13 and a 3-coloring of {1..N} that avoids both obstruction families"
+  },
+  "domain": "combinatorics/hybrid-Schur-van-der-Waerden (universal over N)",
+  "rung": {
+    "level": "R5",
+    "name": "multi-region min-trust",
+    "trusted_base": [
+      "min-trust across regions = the WEAKEST region",
+      "region N=13 is R2 (compiled-checker cert); the N>=14 tail rests on an un-formalized monotonicity argument (R5) -- so the whole universal-over-N claim is only as strong as the tail"
+    ]
+  },
+  "certificate": {
+    "kind": "multi-region",
+    "meta": {
+      "rule": "rung = min-trust over regions; see docs/composition-example.md"
+    }
+  },
+  "checker": {
+    "kind": "multi-region",
+    "regions": [
+      {
+        "region": "threshold-N13",
+        "rung": "R2",
+        "checker": {
+          "kind": "lratcheck",
+          "cert": "certs/hybrid_schur_vdw_3color_13.cert",
+          "accept_pattern": "VERIFIED",
+          "binary_env": "LRATCHECK_BIN",
+          "binary_default": "../dist/lean-verification-journey/.lake/build/bin/lratcheck"
+        },
+        "certificate": {
+          "kind": "lrat-flat",
+          "path": "certs/hybrid_schur_vdw_3color_13.cert",
+          "sha256": "759ca5c406416f812f7b688c7aa543e1549e36952f01579a0ab8d13be539a886",
+          "meta": {
+            "original_clauses": 274,
+            "proof_steps": 2443,
+            "variables": 39,
+            "forbidden_triples": 74,
+            "format": "flat space-separated DIMACS ints consumed by parseCert",
+            "cross_reference": "same finite claim as hybrid-schur-vdw-3color-le-13 (R3 exhaustive Python recomputation)"
+          },
+          "encoder": {
+            "kind": "hybrid_schur_vdw_cnf",
+            "n": 13,
+            "colors": 3,
+            "variable_scheme": "point-major, zero-based colors, one-based DIMACS variables",
+            "constraints": [
+              "exactly one color per point",
+              "no monochromatic Schur triple x+y=z",
+              "no monochromatic 3-term arithmetic progression"
+            ]
+          }
+        }
+      },
+      {
+        "region": "tail-N>=14",
+        "rung": "R5",
+        "checker": {
+          "kind": "manual",
+          "promote_recipe": "Formalize the restriction/monotonicity lemma: any 3-coloring of {1..N} restricts to a 3-coloring of {1..13}; since the N=13 obstruction is forced (region threshold-N13), every N>=14 case is forced too. As a Lean lemma this region becomes R0/R2 and the whole claim certifies at R2. Until then it is an argued-but-uncertified R5 region."
+        }
+      }
+    ]
+  },
+  "status": "live",
+  "provenance": {
+    "source_package": "barrier-atlas (multi-region)",
+    "pipeline": "region N=13 re-checks the real hybrid cert via lratcheck (R2); region N>=14 is a stated monotonicity argument, not yet formalized (R5)"
+  },
+  "one_directional": "A multi-region barrier is exactly as strong as its weakest region. The N=13 region is R2-CERTIFIED, but the N>=14 tail is a manual R5 region with no automated checker, so the composite honestly reports DEFERRED -- the rigorous threshold region cannot launder the universal-over-N claim up to R2. Formalizing the one-line restriction lemma promotes the whole barrier to R2."
+}
