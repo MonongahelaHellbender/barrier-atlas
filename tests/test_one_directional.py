@@ -90,6 +90,35 @@ def test_encoder_lie_refused():
     print("PASS  wrong encoder spec -> REFUSED (claim/CNF binding fails closed)")
 
 
+def test_hybrid_encoder_lie_refused():
+    """The hybrid R2 entry must refuse if the finite claim/CNF binding is wrong."""
+    env = json.loads((ROOT / "barriers" / "hybrid-schur-vdw-3color-le-13-r2.barrier.json").read_text())
+    env["certificate"]["encoder"]["n"] = 12
+    rc, out = _run(env, "hybridencoderlie")
+    assert rc == 1 and "encoder mismatch" in out and "CERTIFIED" not in out, out
+    print("PASS  hybrid wrong encoder spec -> REFUSED")
+
+
+def test_hybrid_rup_certificate_generator():
+    """The deterministic hybrid cert generator must reproduce a self-verifying proof."""
+    r = subprocess.run(
+        [PY, str(ROOT / "tools" / "hybrid_schur_vdw_cert.py"), "--json"],
+        capture_output=True,
+        text=True,
+    )
+    assert r.returncode == 0, r.stdout + r.stderr
+    data = json.loads(r.stdout)
+    assert data["verified"] is True and data["original_clauses"] == 274 and data["proof_steps"] == 2443, data
+
+    r = subprocess.run(
+        [PY, str(ROOT / "tools" / "encoder_check.py"), str(ROOT / "certs" / "hybrid_schur_vdw_3color_13.cert"), "hybrid13"],
+        capture_output=True,
+        text=True,
+    )
+    assert r.returncode == 0 and "encoder exact-match" in r.stdout, r.stdout + r.stderr
+    print("PASS  hybrid RUP cert generator and encoder binding")
+
+
 def test_rup_python_deterministic_mutation_fuzzer():
     """A small deterministic mutation fuzzer guards the independent RUP checker."""
     sys.path.insert(0, str(ROOT / "tools"))
@@ -159,6 +188,8 @@ if __name__ == "__main__":
     test_rung_laundering_refused()
     test_rup_python_refuses_broken_proof()
     test_encoder_lie_refused()
+    test_hybrid_encoder_lie_refused()
+    test_hybrid_rup_certificate_generator()
     test_rup_python_deterministic_mutation_fuzzer()
     test_rup_python_differential_fuzzer()
     test_hybrid_schur_vdw_certifies_and_refuses_bad_witness()

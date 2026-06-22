@@ -1,0 +1,57 @@
+{
+  "id": "hybrid-schur-vdw-3color-le-13-r2",
+  "schema_version": "0.1",
+  "claim": {
+    "statement": "No 3-coloring of [1,...,13] avoids both monochromatic Schur triples x+y=z and monochromatic 3-term arithmetic progressions.",
+    "kind": "impossibility",
+    "negation_of": "a 3-coloring of [1,...,13] with no monochromatic Schur triple and no monochromatic 3-term arithmetic progression"
+  },
+  "domain": "combinatorics/hybrid-Schur-van-der-Waerden",
+  "rung": {
+    "level": "R2",
+    "name": "verified-checker-program",
+    "trusted_base": [
+      "Lean compiler",
+      "checkProofArr_unsat (Lean-proved sound: checkProofArr f steps = true -> Unsat f)",
+      "untrusted certificate parser",
+      "small hybrid Schur/vdW CNF encoder"
+    ]
+  },
+  "certificate": {
+    "kind": "lrat-flat",
+    "path": "certs/hybrid_schur_vdw_3color_13.cert",
+    "sha256": "759ca5c406416f812f7b688c7aa543e1549e36952f01579a0ab8d13be539a886",
+    "meta": {
+      "original_clauses": 274,
+      "proof_steps": 2443,
+      "variables": 39,
+      "forbidden_triples": 74,
+      "format": "flat space-separated DIMACS ints consumed by parseCert",
+      "cross_reference": "same finite claim as hybrid-schur-vdw-3color-le-13 (R3 exhaustive Python recomputation)"
+    },
+    "encoder": {
+      "kind": "hybrid_schur_vdw_cnf",
+      "n": 13,
+      "colors": 3,
+      "variable_scheme": "point-major, zero-based colors, one-based DIMACS variables",
+      "constraints": [
+        "exactly one color per point",
+        "no monochromatic Schur triple x+y=z",
+        "no monochromatic 3-term arithmetic progression"
+      ]
+    }
+  },
+  "checker": {
+    "kind": "lratcheck",
+    "cert": "certs/hybrid_schur_vdw_3color_13.cert",
+    "accept_pattern": "VERIFIED",
+    "binary_env": "LRATCHECK_BIN",
+    "binary_default": "../dist/lean-verification-journey/.lake/build/bin/lratcheck"
+  },
+  "status": "live",
+  "provenance": {
+    "source_package": "barrier-atlas",
+    "pipeline": "deterministic hybrid CNF encoder -> prefix-blocking RUP proof generator -> rup_check self-check -> lratcheck"
+  },
+  "one_directional": "The Lean-proved checker can never falsely certify a parsed CNF as UNSAT; a parser or proof-generation bug only causes refusal. The atlas binds exact cert bytes by sha256, cross-checks parsed clause/step counts, and regenerates the hybrid Schur/vdW CNF from the declared encoder spec before invoking lratcheck. This is a new atlas-certified finite result, not a literature-priority claim and not yet a Lean-formalized combinatorics theorem."
+}

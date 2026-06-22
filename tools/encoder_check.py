@@ -13,6 +13,7 @@ import sys
 from pathlib import Path
 
 import rup_check
+from hybrid_schur_vdw_check import triples
 
 
 def _var(point: int, color: int, colors: int) -> int:
@@ -76,9 +77,27 @@ def _ramsey_edge_coloring_cnf(spec: dict) -> list[list[int]]:
     return clauses
 
 
+def _hybrid_schur_vdw_cnf(spec: dict) -> list[list[int]]:
+    n = int(spec["n"])
+    colors = int(spec["colors"])
+    clauses: list[list[int]] = []
+
+    for point in range(1, n + 1):
+        clauses.append([_var(point, color, colors) for color in range(colors)])
+        for c1 in range(colors):
+            for c2 in range(c1 + 1, colors):
+                clauses.append([-_var(point, c1, colors), -_var(point, c2, colors)])
+
+    for triple in triples(n).all:
+        for color in range(colors):
+            clauses.append([-_var(point, color, colors) for point in triple])
+    return clauses
+
+
 GENERATORS = {
     "vdw_progression_cnf": _vdw_progression_cnf,
     "ramsey_edge_coloring_cnf": _ramsey_edge_coloring_cnf,
+    "hybrid_schur_vdw_cnf": _hybrid_schur_vdw_cnf,
 }
 
 
@@ -124,6 +143,11 @@ def main(argv: list[str]) -> int:
             "vertices": 9,
             "red_clique": 3,
             "blue_clique": 4,
+        },
+        "hybrid13": {
+            "kind": "hybrid_schur_vdw_cnf",
+            "n": 13,
+            "colors": 3,
         },
     }
     spec = presets.get(kind, {"kind": kind})

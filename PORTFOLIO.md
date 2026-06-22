@@ -15,15 +15,16 @@ claim boundary is not earned.
 
 ## What Changed After Public Release
 
-- The combinatorics barriers now check the claim-to-CNF binding: W(3,3) and
-  R(3,4) clauses are regenerated from a declared encoder spec and must exactly
-  match the original clauses embedded in the bundled cert.
+- The combinatorics barriers now check the claim-to-CNF binding: W(3,3),
+  R(3,4), and the hybrid Schur/vdW clauses are regenerated from declared encoder
+  specs and must exactly match the original clauses embedded in the bundled cert.
 - The independent Python RUP checker is guarded by deterministic mutation fuzzing
   over both bundled certificates.
 - The atlas now includes a new finite hybrid barrier: no 3-coloring of `[13]`
   avoids both monochromatic Schur triples and monochromatic 3-term arithmetic
-  progressions, with a checked `[12]` lower-bound witness. This is an R3
-  exhaustive-computation result, not a formal-proof or literature-priority claim.
+  progressions, with a checked `[12]` lower-bound witness. This now has an R2
+  CNF/RUP certificate accepted by `lratcheck` plus an R3 exhaustive recomputation.
+  It is still not a Lean-formalized theorem or literature-priority claim.
 - The composition calculus remains one-directional: a composite cannot claim a
   stronger rung than its weakest checked part.
 
@@ -34,7 +35,8 @@ Supported:
 - known finite combinatorics certificates can be replayed and cross-checked;
 - two independent implementations agree on the W(3,3) certificate;
 - cert bytes, parsed shape, and v0 combinatorics encoders are bound to the claims;
-- the finite hybrid Schur/AP barrier is exhaustively rechecked from a declared spec;
+- the finite hybrid Schur/AP barrier is certified by a bound CNF/RUP cert and
+  independently exhaustively rechecked from a declared spec;
 - composed barriers propagate their weakest rung and refuse rung laundering.
 
 Not supported:

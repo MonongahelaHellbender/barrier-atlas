@@ -5,7 +5,7 @@
 > **trust rung**. The impossibility dual of a proof library.
 
 Sister project to `lean-verification-journey` / `certified-combinatorics-verification`.
-Status: **v0.1 public, green, and claim-boundary hardened.**
+Status: **v0.2 public, green, and hybrid-result strengthened to R2.**
 
 ---
 
@@ -82,6 +82,10 @@ kinds** from one envelope format, with honest deferrals for the rest:
 - **LIVE / R0–R1** — `nn-robust-2relu` (no adversarial example flips the class on
   `[-1,1]²`) via the Lean `#print axioms` audit of `net_robust`.
   *(checker kind: `lean-axioms` — a genuinely different evidence kind)*
+- **LIVE / R2 + R3** — `hybrid-schur-vdw-3color-le-13` (no 3-coloring of `[13]`
+  avoids both Schur triples and 3-term APs) via a CNF/RUP certificate accepted by
+  `lratcheck`, plus an independent exhaustive Python recomputation with a checked
+  `[12]` lower witness.
 - **DEFERRED / R4** — `private-empirical-barrier` (an unpublished empirical barrier,
   specifics withheld): a real barrier with no automated checker yet; registered
   honestly with the exact recipe to promote it. This *is* the demonstration of the
@@ -101,8 +105,9 @@ the certificate-backed combinatorics claims.
 3. ✅ **DONE** — the composition calculus: a `composed` checker recursively re-checks
    sub-barriers and enforces min-trust (weakest-link) rung arithmetic; rung-laundering
    fails closed. Two live composed barriers (one CERTIFIED, one DEFERRED-by-propagation).
-4. ✅ **DONE** — v0 encoder binding: W(3,3) and R(3,4) CNFs are regenerated from
-   declared specs and must exactly match the original clauses embedded in the cert.
+4. ✅ **DONE** — v0 encoder binding: W(3,3), R(3,4), and the hybrid Schur/vdW
+   CNFs are regenerated from declared specs and must exactly match the original
+   clauses embedded in the cert.
 5. ✅ **DONE** — portfolio index and stronger safety tests: reviewer-facing
    [`PORTFOLIO.md`](PORTFOLIO.md), encoder-lie refusal, and deterministic RUP
    mutation fuzzing.
@@ -115,8 +120,11 @@ the certificate-backed combinatorics claims.
    checked `[12]` witness keeps the threshold tight for this declared spec. This
    is an atlas-certified exhaustive-computation result, not a formal proof or
    literature-priority claim.
-9. ⏭ Strengthen the new hybrid barrier: independent implementation, SAT/LRAT
-   certificate, or Lean formalization of the finite checker/spec.
+9. ✅ **DONE (R2 certificate)** — strengthened the same hybrid finite result with
+   a deterministic CNF encoder, prefix-blocking RUP proof generator, bundled flat
+   certificate, exact encoder binding, and `lratcheck` acceptance.
+10. ⏭ Formalize the hybrid finite checker/spec in Lean, or add multi-region rung
+   machinery. Do not claim a Lean theorem until this gate exists.
 
 ## 5. Honest risks
 
@@ -168,11 +176,18 @@ the certificate-backed combinatorics claims.
   wrong encoder spec is a permanent refusal test.
 - **Pass 8 — reviewer leverage without overclaiming.** Added `PORTFOLIO.md` as a
   public index across the verification artifacts and `docs/frontier-targets.md` as
-  the next-result packet. The latter is explicitly `NEW_RESULT_NOT_CLAIMED`: it
-  defines the gate for a future frontier entry without pretending one has been earned.
+  the frontier packet. It names exactly which evidence was earned and which claims
+  remain unsupported.
 - **Pass 9 — first new finite atlas barrier.** Added a live R3 exhaustive checker
   for the hybrid Schur/van der Waerden spec: avoid monochromatic Schur triples
   `x+y=z` and monochromatic 3-term APs simultaneously. The checker validates a
   `[12]` witness and exhaustively refuses all `[13]` colorings. The claim is new
   to the atlas and not merely another known-value SAT replay; it remains bounded
   as R3 because the Python checker/spec are trusted.
+- **Pass 10 — strengthen the hybrid result to R2.** Added a deterministic CNF
+  encoder and a prefix-blocking RUP proof generator for the same finite hybrid
+  claim. The bundled cert has 274 original clauses and 2443 proof steps; it
+  self-checks with the Python RUP checker, exact-matches the regenerated
+  `hybrid_schur_vdw_cnf`, and is accepted by the Lean-proved `lratcheck`. The R3
+  exhaustive entry remains as independent corroboration and the claim boundary
+  still excludes literature priority and Lean formalization.

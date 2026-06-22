@@ -42,7 +42,7 @@
           "required": ["kind"],
           "properties": {
             "kind": {
-              "enum": ["vdw_progression_cnf", "ramsey_edge_coloring_cnf"]
+              "enum": ["vdw_progression_cnf", "ramsey_edge_coloring_cnf", "hybrid_schur_vdw_cnf"]
             }
           },
           "additionalProperties": true

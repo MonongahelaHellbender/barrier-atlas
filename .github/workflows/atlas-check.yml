@@ -25,12 +25,15 @@ jobs:
         run: |
           python3 tools/encoder_check.py certs/samples_w33.cert w33
           python3 tools/encoder_check.py certs/samples_r34.cert r34
+          python3 tools/encoder_check.py certs/hybrid_schur_vdw_3color_13.cert hybrid13
 
       - name: R3 differential fuzzer
         run: python3 tools/rup_differential_fuzzer.py --cases 64
 
       - name: Hybrid Schur-vdW finite barrier
-        run: python3 tools/hybrid_schur_vdw_check.py --n 13 --colors 3
+        run: |
+          python3 tools/hybrid_schur_vdw_check.py --n 13 --colors 3
+          python3 tools/hybrid_schur_vdw_cert.py --json
 
       # Always-valid invariant on a bare runner: re-checking the atlas must never
       # REFUSE a live barrier. Without the Lean toolchain the lratcheck/lean-axioms

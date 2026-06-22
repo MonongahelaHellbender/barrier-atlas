@@ -13,7 +13,8 @@
     "trusted_base": [
       "a small Python exhaustive finite-coloring checker (tools/hybrid_schur_vdw_check.py)",
       "the declared hybrid obstruction spec: Schur triples x+y=z and 3-term APs in [n]",
-      "a lower-bound witness for [12] checked by the same script"
+      "a lower-bound witness for [12] checked by the same script",
+      "agrees with the separate R2 CNF/RUP certificate for the same finite claim"
     ]
   },
   "certificate": {
@@ -26,7 +27,8 @@
       "combined_unique_triple_count": 74,
       "lower_bound_witness_n": 12,
       "lower_bound_witness": [0, 1, 0, 2, 1, 2, 2, 0, 2, 0, 1, 1],
-      "lower_bound_witness_meaning": "This 3-coloring of [12] avoids both monochromatic Schur triples and monochromatic 3-term APs, so the certified [13] barrier is tight for this spec."
+      "lower_bound_witness_meaning": "This 3-coloring of [12] avoids both monochromatic Schur triples and monochromatic 3-term APs, so the certified [13] barrier is tight for this spec.",
+      "cross_reference": "same finite claim as hybrid-schur-vdw-3color-le-13-r2 (R2 CNF/RUP certificate)"
     }
   },
   "checker": {
@@ -40,5 +42,5 @@
     "source_package": "barrier-atlas",
     "pipeline": "bounded discovery scout found SAT through n=12 and UNSAT at n=13; live checker re-enumerates the finite obstruction spec and validates the n=12 witness before certifying the n=13 barrier"
   },
-  "one_directional": "The checker fails closed if the lower-bound witness is invalid or if any counterexample coloring of [13] is found. This is R3, not R2: a bug in the Python exhaustive checker or in the declared hybrid spec could in principle cause a false accept. The claim is a new atlas-certified finite hybrid barrier, not a literature-priority claim."
+  "one_directional": "This R3 entry fails closed if the lower-bound witness is invalid or if any counterexample coloring of [13] is found. A bug in the Python exhaustive checker or in the declared hybrid spec could in principle cause a false accept, so this corroborating entry stays R3 even though the same finite claim also has a separate R2 CNF/RUP certificate. The claim is a new atlas-certified finite hybrid barrier, not a literature-priority claim."
 }

@@ -66,8 +66,19 @@ and:
 }
 ```
 
-Both require an exact ordered clause match to the original formula embedded in the
-flat cert. This closes the v0 claim/CNF binding for W(3,3) and R(3,4).
+and:
+
+```json
+"encoder": {
+  "kind": "hybrid_schur_vdw_cnf",
+  "n": 13,
+  "colors": 3
+}
+```
+
+All three require an exact ordered clause match to the original formula embedded
+in the flat cert. This closes the v0 claim/CNF binding for W(3,3), R(3,4), and
+the finite hybrid Schur/vdW obstruction.
 
 ### `lean-axioms` (rung R0/R1 — kernel-checked)
 ```json
@@ -106,7 +117,9 @@ cross-implementation corroboration.
 Runs `tools/hybrid_schur_vdw_check.py` on the declared finite hybrid spec:
 avoid monochromatic Schur triples `x+y=z` and monochromatic 3-term arithmetic
 progressions. It also validates the lower-bound witness when supplied. R3, not
-R2: you trust the Python exhaustive checker and the declared finite spec.
+R2: you trust the Python exhaustive checker and the declared finite spec. The
+same finite claim also has a separate R2 `lratcheck` entry when the CNF/RUP
+certificate and `hybrid_schur_vdw_cnf` encoder binding verify.
 
 ### `composed` (rung = min-trust of the parts)
 ```json
