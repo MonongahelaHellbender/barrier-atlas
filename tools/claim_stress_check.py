@@ -17,10 +17,10 @@ automation alone; each can only cap or refuse.
 
   Stage 3 -- CORRECTNESS. NOT automated. Requires a NAMED human sign-off
     (`human_review.kind == "human"`, `by`, `date`, `verdict == "adequate"`) to
-    certify R4. An `llm` sign-off is allowed but is honestly weaker and disclosed,
-    never wearing the human's badge. No sign-off -> DEFER (automated contract met,
-    awaiting the named verdict). Automating the verdict with a model would be
-    rung-laundering -- the one thing the atlas refuses.
+    certify R4. An `llm` or other non-human review can screen answers, but returns
+    DEFERRED; it never certifies. No human sign-off -> DEFER (automated contract
+    met, awaiting the named verdict). Automating the correctness verdict with a
+    model would be rung-laundering -- the one thing the atlas refuses.
 
 Returns (status, detail) where status in {CERTIFIED, REFUSED, UNVERIFIABLE, DEFERRED}.
 """

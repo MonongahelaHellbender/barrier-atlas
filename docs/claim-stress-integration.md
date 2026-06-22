@@ -83,8 +83,9 @@ the author's verdict is not something the tooling fabricates.)*
 
 - `claim_bridge` is keyword/pattern-based; its question coverage is heuristic, not
   exhaustive. So `claim-stress` certifies **answer-completeness + answer-shape + a named
-  verdict** — *not* that the empirical claim is true. The named human (or disclosed llm)
-  carries truth. That is a bounded, honest guarantee, and strictly better than an
+  human verdict** — *not* that the empirical claim is true in a theorem-like sense.
+  Non-human reviewers may screen answers, but only the named human verdict carries the
+  correctness gate. That is a bounded, honest guarantee, and strictly better than an
   unchecked "trust me, it's R4." The trusted base is printed in each envelope.
 - Roadmap: a calibrated **llm-reviewed vs human-reviewed** comparison on the same
   barriers — itself a publishable artifact about where automated review is trustworthy.
