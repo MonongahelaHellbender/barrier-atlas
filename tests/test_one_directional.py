@@ -209,14 +209,15 @@ def test_claim_stress_named_signoff_certifies():
     print("PASS  claim-stress named human sign-off -> CERTIFIED")
 
 
-def test_claim_stress_llm_review_disclosed_weaker():
-    """An llm sign-off is allowed but must be disclosed as weaker -- never wear the human badge."""
+def test_claim_stress_llm_review_does_not_certify():
+    """An llm sign-off SCREENS but never CERTIFIES -- automation is not a correctness
+    gate (the calibration measured llm false-accepts). Only a named human certifies."""
     env = _chaos_env()
     env["checker"]["human_review"] = {"kind": "llm", "by": "some-model",
                                       "date": "2026-06-22", "verdict": "adequate"}
     rc, out = _run(env, "stressllm")
-    assert rc == 0 and "llm-reviewed" in out and "weaker than human" in out, out
-    print("PASS  claim-stress llm sign-off -> CERTIFIED but disclosed as weaker")
+    assert "CERTIFIED" not in out and "DEFERRED" in out and "NOT a correctness gate" in out, out
+    print("PASS  claim-stress llm sign-off -> DEFERRED (screened, never a correctness gate)")
 
 
 def test_empirical_r4_through_composition():
@@ -296,7 +297,7 @@ if __name__ == "__main__":
     test_claim_stress_incomplete_refused()
     test_claim_stress_weak_answer_refused()
     test_claim_stress_named_signoff_certifies()
-    test_claim_stress_llm_review_disclosed_weaker()
+    test_claim_stress_llm_review_does_not_certify()
     test_empirical_r4_through_composition()
     test_multi_region_min_trust()
     test_review_calibration_reports_false_accept()

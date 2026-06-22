@@ -33,6 +33,11 @@ false-reject (llm harsher than human):      1  (rate 0.167)   <- only a cost
 VERDICT: >0 false accepts -- NOT safe as a correctness gate; disclosed-weaker assist only.
 ```
 
+**This is enforced, not just noted.** `claim_stress_check.py` Stage 3 lets an `llm`
+sign-off *screen* (it passes completeness + adequacy) but it returns **DEFERRED**, never
+CERTIFIED — only `kind: "human"` certifies. So a measured false-accept can never mint an
+R4 barrier from automation.
+
 The headline isn't "automated review is good." It's that **on adversarial cases the llm
 reviewer is fooled one-third of the time** — it passed two *fluent fabrications* (a
 made-up "χ²/dof = 0.98 from three fitted parameters," and a fabricated Hurst-exponent

@@ -21,7 +21,7 @@ of the atlas: a claim of impossibility plus everything needed to *re-check it* a
 | `certificate.path` |  | path to the cert artifact, if any (relative to atlas root) |
 | `certificate.meta` |  | free dict (step counts, sizes, source theorem name, …) |
 | `certificate.encoder` |  | optional claim-to-CNF generator spec; when present, the parsed cert formula must exactly match the regenerated clauses |
-| `checker.kind` | ✓ | how to re-check: `lratcheck`, `lean-axioms`, `rup-python`, `hybrid-schur-vdw-exhaustive`, `composed`, or `manual` (deferred) |
+| `checker.kind` | ✓ | how to re-check: `lratcheck`, `lean-axioms`, `rup-python`, `hybrid-schur-vdw-exhaustive`, `composed`, `multi-region`, `claim-stress`, or `manual` (deferred) |
 | `checker.*` | ✓ | kind-specific config (see below) |
 | `status` | ✓ | `"live"` (auto-checkable now) or `"deferred"` (registered, recipe given) |
 | `provenance` | ✓ | where the artifact came from (source package, generation pipeline) |
@@ -135,6 +135,40 @@ Recursively re-checks each sub-barrier by `id`, then `CERTIFIED` iff every part
 certifies **and** the declared `rung.level` equals the *weakest* (min-trust) rung
 among the parts and the composition step. A failing/deferred part propagates; a
 declared rung stronger than the weakest link fails closed (no rung-laundering).
+
+### `multi-region` (rung = min-trust over regions of ONE claim)
+```json
+"checker": {
+  "kind": "multi-region",
+  "regions": [
+    { "region": "threshold-N13", "rung": "R2", "checker": { "kind": "lratcheck", "...": "..." }, "certificate": { "...": "..." } },
+    { "region": "tail-N>=14", "rung": "R5", "checker": { "kind": "manual", "promote_recipe": "..." } }
+  ]
+}
+```
+One impossibility claim whose domain is partitioned into regions, each with its own
+*inline* checker + rung. Runs every region's checker; the barrier earns the **weakest
+(min-trust)** region's rung. Any failed/deferred region propagates (most-severe wins);
+a declared rung stronger than the weakest region fails closed. Unlike `composed`
+(separate claims by `id`), the regions are inline parts of a single claim.
+
+### `claim-stress` (rung R4/R5 — empirical, named-human gate)
+```json
+"checker": {
+  "kind": "claim-stress",
+  "claim_text": "the natural-language impossibility claim",
+  "declared_rung": "R4",
+  "stress_answers": { "<constraint-id>::<generated question>": "answer citing concrete evidence" },
+  "human_review": { "kind": "human", "by": "Name", "date": "YYYY-MM-DD", "verdict": "adequate" }
+}
+```
+Three one-directional stages (see [`docs/claim-stress-integration.md`](docs/claim-stress-integration.md)):
+**(1) completeness** — every question `claim_bridge` generates for `claim_text` must be
+answered, else `REFUSED`; **(2) adequacy** — each answer must cite concrete evidence,
+be non-circular, hedge flagged universals, else `REFUSED`; **(3) correctness** — **only
+`human_review.kind == "human"` with `verdict == "adequate"` certifies**. A `kind: "llm"`
+(or anything non-human) *screens* but returns `DEFERRED` — automation is never a
+correctness gate (see [`docs/review-calibration.md`](docs/review-calibration.md)).
 
 ### `manual` (deferred)
 ```json

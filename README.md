@@ -75,11 +75,12 @@ binds:
 If any of those drift, the entry is `REFUSED`. What remains trusted is the small
 encoder-checking code itself plus the checker trusted base named by each rung.
 
-The hybrid Schur/van der Waerden result now has two entries for the same finite
-claim: an R2 CNF/RUP certificate accepted by the Lean-proved checker, and an R3
-exhaustive Python recomputation with a checked lower-bound witness for [12]. It
-is a new atlas-certified finite result, not a literature-priority claim and not
-yet a Lean-formalized combinatorics theorem.
+The hybrid Schur/van der Waerden result is certified three independent ways for the
+same finite claim: an R2 CNF/RUP certificate accepted by the Lean-proved checker, an
+R3 exhaustive Python recomputation with a checked lower-bound witness for [12], and a
+**Lean 4 formalization** (`hybrid13_no_avoiding_coloring` in lean-verification-journey
+— a machine-checked semantic bridge from the spec to the CNF, plus the UNSAT replay).
+It is a new atlas-certified finite result, not a literature-priority claim.
 
 ## Layout
 

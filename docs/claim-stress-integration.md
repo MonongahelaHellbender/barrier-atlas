@@ -36,8 +36,11 @@ Whether an answer is *true* is the irreducible inch. The checker requires
 `checker.human_review = {kind, by, date, verdict}`:
 - `kind: "human"`, `verdict: "adequate"`, with `by` + `date` → **CERTIFY** at the declared rung.
 - no/incomplete review → **DEFER** ("automated contract satisfied; awaiting named sign-off").
-- `kind: "llm"` is *allowed but disclosed as weaker* — it certifies with an explicit
-  `[llm-reviewed — honestly weaker than human, disclosed]` tag; it never wears the human badge.
+- `kind: "llm"` (or any non-human) **SCREENS but never CERTIFIES** → it returns **DEFERRED**,
+  recording that the answers passed an automated review but still await a *named human*
+  verdict. The calibration ([`review-calibration.md`](review-calibration.md)) measured
+  llm false-accepts, so automation is an *assist*, not a gate. **Only `kind: "human"`
+  certifies.** (Enforced in `claim_stress_check.py` Stage 3; tested.)
 
 **Why correctness can't be automated away:** if you let a model judge correctness and
 fold its verdict silently into CERTIFIED, you've added a large, unnamed, unverifiable

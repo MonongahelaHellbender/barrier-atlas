@@ -107,13 +107,19 @@ def evaluate(env: dict):
     if weak:
         return REFUSED, f"adequacy: {len(weak)} weak answer(s) (e.g. {weak[0][0]} -> {weak[0][1]})"
 
-    # Stage 3 -- correctness: named human (or disclosed, weaker llm) sign-off; never automated
+    # Stage 3 -- correctness: ONLY a named human sign-off certifies. An automated
+    # (llm) reviewer can SCREEN but never CERTIFY, because llm review false-accepts
+    # (measured in docs/review-calibration.md) -- so it is an assist, not a gate.
+    # Letting automation certify would be the rung-laundering the atlas refuses.
     hr = chk.get("human_review", {}) or {}
     kind = hr.get("kind", "human")
     by, date, verdict = hr.get("by", ""), hr.get("date", ""), hr.get("verdict", "")
     if verdict != "adequate" or not by or not date:
         return DEFERRED, (f"automated stress contract satisfied ({len(req)} answered + adequate); "
-                          f"awaiting named {kind} sign-off (verdict={verdict or 'pending'!r})")
-    tag = "" if kind == "human" else f"  [{kind}-reviewed -- honestly weaker than human, disclosed]"
+                          f"awaiting named human sign-off (verdict={verdict or 'pending'!r})")
+    if kind != "human":
+        return DEFERRED, (f"{len(req)} answered + adequate; {kind}-SCREENED adequate by {by} ({date}) "
+                          f"-- but {kind} review is NOT a correctness gate (measured false-accept; "
+                          f"see docs/review-calibration.md). Awaiting a NAMED HUMAN sign-off to certify.")
     return CERTIFIED, (f"{len(req)} stress Qs answered + adequacy-screened; "
-                       f"{kind} sign-off by {by} ({date}){tag}")
+                       f"human sign-off by {by} ({date})")
