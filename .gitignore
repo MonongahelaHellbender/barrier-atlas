@@ -4,3 +4,7 @@ barriers/_tmp_*.barrier.json
 barriers/_test_*.barrier.json
 certs/_tmp_*.cert
 certs/_test_*.cert
+
+# generated visual map (regenerate with tools/atlas_view.py)
+atlas.html
+index.html
