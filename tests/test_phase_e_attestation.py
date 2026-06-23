@@ -48,6 +48,7 @@ def run() -> dict:
         sc.write_keypair(wrong_private_path, wrong_public_path)
         private_key = sc.load_private_key(private_key_path)
         public_key = sc.load_public_key(public_key_path)
+        wrong_private_key = sc.load_private_key(wrong_private_path)
         wrong_public_key = sc.load_public_key(wrong_public_path)
 
         record = _record_for("spec/conformance/fixtures/10-external-rup.barrier.json")
@@ -111,8 +112,47 @@ def run() -> dict:
         ok, reason, _detail = atlas_log.verify_record_inclusion(record, signature, ledger, public_key)
         _assert(ok and reason == atlas_log.LOG_OK, "logged record should verify inclusion")
 
+        second_record = _record_for("spec/conformance/fixtures/01-valid-rup.barrier.json")
+        second_signature = sc.sign_record(second_record, private_key, signed_at="2026-06-23T00:00:02Z")
+        atlas_log.append_record(
+            second_record,
+            second_signature,
+            ledger,
+            public_key,
+            private_key,
+            signed_at="2026-06-23T00:00:03Z",
+        )
+        ok, reason, _detail = atlas_log.verify_record_inclusion(second_record, second_signature, ledger, public_key)
+        _assert(ok and reason == atlas_log.LOG_OK, "latest logged record should verify inclusion")
+        ok, reason, _detail = atlas_log.verify_record_inclusion(record, signature, ledger, public_key)
+        _assert(ok and reason == atlas_log.LOG_OK, "earlier logged record should keep a current inclusion proof")
+
+        try:
+            atlas_log.append_record(record, signature, ledger, public_key, private_key, signed_at="2026-06-23T00:00:04Z")
+        except ValueError as e:
+            _assert(str(e).startswith(atlas_log.LOG_DUPLICATE_RECORD), "duplicate record core must be refused")
+        else:
+            raise AssertionError("duplicate record core must be refused")
+
+        try:
+            atlas_log.append_record(
+                record,
+                signature,
+                temp / "BAD_LEDGER",
+                public_key,
+                wrong_private_key,
+                signed_at="2026-06-23T00:00:04Z",
+            )
+        except ValueError as e:
+            _assert(
+                str(e).startswith(atlas_log.CHECKPOINT_SIGNATURE_INVALID),
+                "checkpoint key mismatch must be refused before writing ledger state",
+            )
+        else:
+            raise AssertionError("checkpoint key mismatch must be refused")
+
         never_logged = _record_for("spec/conformance/fixtures/11-checker-hash-mismatch.barrier.json")
-        never_signature = sc.sign_record(never_logged, private_key, signed_at="2026-06-23T00:00:02Z")
+        never_signature = sc.sign_record(never_logged, private_key, signed_at="2026-06-23T00:00:05Z")
         ok, reason, _detail = atlas_log.verify_record_inclusion(never_logged, never_signature, ledger, public_key)
         _assert((not ok) and reason == atlas_log.LOG_INCLUSION_MISSING, "never-logged record must fail inclusion")
 

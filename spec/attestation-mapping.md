@@ -38,6 +38,14 @@ a zero-infrastructure witness: Git and GitHub make history rewrites visible. The
 limit is explicit: this is a git-witnessed log, not a globally distributed
 transparency service.
 
+Proof files are checkpoint-current: appending a new record refreshes inclusion
+proofs for all logged records, and duplicate `record_core_sha256` entries are
+refused so each digest names at most one proof.
+
+Phase E v0.1 verifies record signatures and ledger checkpoints under the same
+Ed25519 public key. `append` refuses a checkpoint key mismatch instead of writing
+ledger state that `verify-ledger` cannot validate.
+
 ## in-toto Shape
 
 `tools/to_intoto.py` maps a verdict record to an in-toto Statement:

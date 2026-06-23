@@ -17,6 +17,7 @@ PROOFS = "proofs"
 LOG_OK = "OK"
 LOG_INCLUSION_MISSING = "LOG_INCLUSION_MISSING"
 LOG_ROOT_MISMATCH = "LOG_ROOT_MISMATCH"
+LOG_DUPLICATE_RECORD = "LOG_DUPLICATE_RECORD"
 CHECKPOINT_SIGNATURE_INVALID = "CHECKPOINT_SIGNATURE_INVALID"
 
 
@@ -123,29 +124,46 @@ def _leaf_hashes(entries: list[dict]) -> list[str]:
     return [_leaf_hash(row["entry"]) for row in entries]
 
 
+def _proof_for_entry(entries: list[dict], leaves: list[str], root: str, leaf_index: int) -> dict:
+    entry = entries[leaf_index]["entry"]
+    return {
+        "proof_version": sc.SIGNATURE_VERSION,
+        "record_core_sha256": entry["record_core_sha256"],
+        "leaf_index": leaf_index,
+        "leaf_hash": leaves[leaf_index],
+        "tree_size": len(entries),
+        "root_hash": root,
+        "proof": inclusion_proof(leaves, leaf_index),
+    }
+
+
+def _write_proofs(ledger: Path, entries: list[dict], leaves: list[str], root: str) -> None:
+    for leaf_index, row in enumerate(entries):
+        digest = row["entry"]["record_core_sha256"]
+        sc.write_json(_proof_path(ledger, digest), _proof_for_entry(entries, leaves, root, leaf_index))
+
+
 def append_record(record: dict, signature: dict, ledger: Path, public_key, checkpoint_key,
                   signed_at: str | None = None) -> dict:
     ok, reason, detail = sc.verify_record_signature(record, signature, public_key)
     if not ok:
         raise ValueError(f"{reason}: {detail}")
     entries = load_entries(ledger)
+    digest = signature["record_core_sha256"]
+    if any(row["entry"]["record_core_sha256"] == digest for row in entries):
+        raise ValueError(f"{LOG_DUPLICATE_RECORD}: {digest}")
     entry = _entry_for(record, signature)
     entries.append({"leaf_index": len(entries), "entry": entry})
     leaves = _leaf_hashes(entries)
     root = merkle_root(leaves)
     checkpoint = sc.sign_checkpoint(len(entries), root, checkpoint_key, signed_at)
-    proof = {
-        "proof_version": sc.SIGNATURE_VERSION,
-        "record_core_sha256": signature["record_core_sha256"],
-        "leaf_index": len(entries) - 1,
-        "leaf_hash": leaves[-1],
-        "tree_size": len(entries),
-        "root_hash": root,
-        "proof": inclusion_proof(leaves, len(entries) - 1),
-    }
+    checkpoint_ok, checkpoint_detail = sc.verify_checkpoint(checkpoint, public_key)
+    if not checkpoint_ok:
+        raise ValueError(f"{CHECKPOINT_SIGNATURE_INVALID}: {checkpoint_detail}")
+    proof = _proof_for_entry(entries, leaves, root, len(entries) - 1)
     _write_entries(ledger, entries)
     sc.write_json(_checkpoint_path(ledger), checkpoint)
-    sc.write_json(_proof_path(ledger, signature["record_core_sha256"]), proof)
+    _write_proofs(ledger, entries, leaves, root)
     return {"checkpoint": checkpoint, "proof": proof}
 
 
