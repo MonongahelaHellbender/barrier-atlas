@@ -12,7 +12,9 @@ happen, with each entry carrying a machine-checkable certificate at an explicit
 > removes a region of the search space from consideration.
 >
 > For a reviewer-facing map of the surrounding public work, see
-> [`PORTFOLIO.md`](PORTFOLIO.md).
+> [`PORTFOLIO.md`](PORTFOLIO.md). For a fast audit path, see
+> [`REVIEWER_BRIEF.md`](REVIEWER_BRIEF.md) and
+> [`spec/DESIGN_CLAIMS_AND_LIMITS.md`](spec/DESIGN_CLAIMS_AND_LIMITS.md).
 
 ## What's here (v0.5)
 
@@ -89,6 +91,7 @@ It is a new atlas-certified finite result, not a literature-priority claim.
 
 ```
 PLAN.md      vision, rung ladder, composition calculus, roadmap, refinement log
+REVIEWER_BRIEF.md one-page reviewer entry point
 PORTFOLIO.md public reviewer-facing index across the verification artifacts
 SCHEMA.md    the envelope spec        schema/barrier.schema.json  machine schema
 spec/        v0.1 runner/envelope/conformance seed for bounded assurance claims
@@ -131,7 +134,7 @@ through the **min-trust composition** calculus as a first-class input; **multi-r
 rungs** — one claim partitioned into regions, each at its own rung, earning the weakest
 ([`docs/composition-example.md`](docs/composition-example.md)); and a **review-calibration**
 artifact measuring llm-vs-human false-accept rate, justifying why correctness stays human
-([`docs/review-calibration.md`](docs/review-calibration.md)); and a v0.1 spec/conformance
+([`docs/review-calibration.md`](docs/review-calibration.md)); plus a v0.1 spec/conformance
 seed with 13 fixtures, including hash-pinned external checker plugins that still fail
 closed under artifact tamper and rung overclaim. See [`PLAN.md`](PLAN.md) §4
 for what's left: a dashboard / visual negative-space map.

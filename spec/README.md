@@ -20,6 +20,7 @@ python3 spec/conformance/run_conformance.py --runner "python3 tools/plugin_runne
 - `envelope-v0.1.schema.json` describes the envelope shape.
 - `verdict-semantics.md` defines verdicts and reason codes.
 - `THREAT_MODEL.md` names what the runner does and does not defend.
+- `DESIGN_CLAIMS_AND_LIMITS.md` states what v0.1 earns, trusts, and does not claim.
 - `runner-contract.md` defines the runner CLI and verdict record.
 - `checker-plugin-contract.md` defines the external plugin contract.
 - `conformance/` is the executable spec seed.
