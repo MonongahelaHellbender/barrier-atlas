@@ -1,0 +1,28 @@
+{
+  "id": "conf-unknown-checker",
+  "schema_version": "0.1",
+  "claim": {
+    "statement": "An unsupported checker kind cannot certify a bounded claim.",
+    "kind": "impossibility",
+    "negation_of": "certification by an unknown checker kind",
+    "scope": "one unsupported checker declaration"
+  },
+  "domain": "conformance/checker",
+  "rung": {
+    "level": "R3",
+    "name": "unsupported-checker",
+    "trusted_base": ["none"]
+  },
+  "certificate": { "kind": "none" },
+  "checker": {
+    "kind": "definitely-not-a-checker"
+  },
+  "status": "live",
+  "provenance": {
+    "source_package": "barrier-atlas conformance",
+    "pipeline": "unknown checker kind"
+  },
+  "one_directional": "Unsupported checker kinds are unverifiable here and cannot certify.",
+  "expected_verdict": "UNVERIFIABLE-HERE",
+  "expected_reason_code": "UNKNOWN_CHECKER"
+}

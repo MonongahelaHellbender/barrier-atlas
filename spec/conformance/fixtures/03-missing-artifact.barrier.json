@@ -1,0 +1,43 @@
+{
+  "id": "conf-missing-artifact",
+  "schema_version": "0.1",
+  "claim": {
+    "statement": "A missing hash-bound artifact cannot certify a bounded claim.",
+    "kind": "impossibility",
+    "negation_of": "certification without the declared artifact",
+    "scope": "one absent local artifact"
+  },
+  "domain": "conformance/artifact",
+  "rung": {
+    "level": "R3",
+    "name": "independent-recomputation",
+    "trusted_base": ["runner artifact existence check"]
+  },
+  "certificate": {
+    "kind": "lrat-flat",
+    "path": "spec/conformance/fixtures/no-such.cert",
+    "sha256": "f280ae0847138a9e4332446de277ef9e870d27571d33b80d0b3a0f68a7aa4b7a",
+    "meta": { "original_clauses": 615, "proof_steps": 6179 }
+  },
+  "artifacts": [
+    {
+      "id": "missing-cert",
+      "type": "lrat-flat",
+      "role": "certificate",
+      "path": "spec/conformance/fixtures/no-such.cert",
+      "sha256": "f280ae0847138a9e4332446de277ef9e870d27571d33b80d0b3a0f68a7aa4b7a"
+    }
+  ],
+  "checker": {
+    "kind": "rup-python",
+    "cert": "spec/conformance/fixtures/no-such.cert"
+  },
+  "status": "live",
+  "provenance": {
+    "source_package": "barrier-atlas conformance",
+    "pipeline": "declared artifact path intentionally absent"
+  },
+  "one_directional": "The runner refuses before running the checker when an artifact is missing.",
+  "expected_verdict": "REFUSED",
+  "expected_reason_code": "ARTIFACT_MISSING"
+}

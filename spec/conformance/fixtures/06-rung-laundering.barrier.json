@@ -1,0 +1,35 @@
+{
+  "id": "conf-rung-laundering",
+  "schema_version": "0.1",
+  "claim": {
+    "statement": "A composed barrier cannot claim a stronger rung than its certified sub-barrier earned.",
+    "kind": "impossibility",
+    "negation_of": "a composed certificate laundered above its weakest sub-barrier",
+    "scope": "one R3 sub-barrier plus an R0 composition step"
+  },
+  "domain": "conformance/composed",
+  "rung": {
+    "level": "R2",
+    "name": "overdeclared-composite",
+    "trusted_base": ["this rung is intentionally too strong"]
+  },
+  "certificate": {
+    "kind": "composition",
+    "meta": { "expected_min_trust": "R3" }
+  },
+  "checker": {
+    "kind": "composed",
+    "composition": {
+      "sub_barriers": ["sub-rup-r3"],
+      "step": { "rung": "R0", "description": "identity composition for conformance" }
+    }
+  },
+  "status": "live",
+  "provenance": {
+    "source_package": "barrier-atlas conformance",
+    "pipeline": "self-contained sub-barrier in spec/conformance/fixtures"
+  },
+  "one_directional": "The runner computes min-trust and refuses the stronger declared rung.",
+  "expected_verdict": "REFUSED",
+  "expected_reason_code": "RUNG_LAUNDERING"
+}

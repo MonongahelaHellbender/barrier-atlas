@@ -1,0 +1,35 @@
+{
+  "id": "conf-weak-subbarrier",
+  "schema_version": "0.1",
+  "claim": {
+    "statement": "A composed barrier with a deferred sub-barrier remains deferred.",
+    "kind": "impossibility",
+    "negation_of": "a composite certified while a required sub-barrier is deferred",
+    "scope": "one R3 certified sub-barrier and one R4 deferred sub-barrier"
+  },
+  "domain": "conformance/composed",
+  "rung": {
+    "level": "R4",
+    "name": "empirical-robust",
+    "trusted_base": ["min-trust with one deferred empirical sub-barrier"]
+  },
+  "certificate": {
+    "kind": "composition",
+    "meta": { "expected_min_trust": "R4" }
+  },
+  "checker": {
+    "kind": "composed",
+    "composition": {
+      "sub_barriers": ["sub-rup-r3", "sub-manual-r4"],
+      "step": { "rung": "R0", "description": "conjunction for conformance" }
+    }
+  },
+  "status": "live",
+  "provenance": {
+    "source_package": "barrier-atlas conformance",
+    "pipeline": "self-contained deferred sub-barrier in spec/conformance/fixtures"
+  },
+  "one_directional": "A deferred sub-barrier propagates and prevents certification.",
+  "expected_verdict": "DEFERRED",
+  "expected_reason_code": "WEAK_SUBBARRIER"
+}

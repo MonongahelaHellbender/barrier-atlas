@@ -1,0 +1,27 @@
+{
+  "id": "sub-manual-r4",
+  "schema_version": "0.1",
+  "claim": {
+    "statement": "A bounded empirical claim is registered but intentionally lacks an automated checker.",
+    "kind": "impossibility",
+    "negation_of": "an automated certification of this empirical claim",
+    "scope": "manual conformance fixture"
+  },
+  "domain": "conformance/manual",
+  "rung": {
+    "level": "R4",
+    "name": "empirical-robust",
+    "trusted_base": ["manual review pending"]
+  },
+  "certificate": { "kind": "manual" },
+  "checker": {
+    "kind": "manual",
+    "promote_recipe": "Add a real automated empirical checker or a named human review gate."
+  },
+  "status": "deferred",
+  "provenance": {
+    "source_package": "barrier-atlas conformance",
+    "pipeline": "deferred sub-barrier used to test propagation"
+  },
+  "one_directional": "Manual barriers defer and cannot certify through automation."
+}

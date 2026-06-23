@@ -1,0 +1,46 @@
+{
+  "id": "conf-weak-answer",
+  "schema_version": "0.1",
+  "claim": {
+    "statement": "The bounded evaluator does not certify models outside the tested dataset slice.",
+    "kind": "impossibility",
+    "negation_of": "certification of models outside the tested dataset slice",
+    "scope": "the named dataset slice only"
+  },
+  "domain": "conformance/claim-stress",
+  "rung": {
+    "level": "R4",
+    "name": "empirical-robust",
+    "trusted_base": ["claim-stress completeness and adequacy screen"]
+  },
+  "certificate": { "kind": "stress-contract" },
+  "checker": {
+    "kind": "claim-stress",
+    "claim_text": "The bounded evaluator does not certify models outside the tested dataset slice.",
+    "declared_rung": "R4",
+    "stress_answers": {
+      "model_degeneracy::Do other models predict the same observations?": "Yes, it is fine.",
+      "model_degeneracy::What independent observable would distinguish between models?": "The independent observable is the audit-log count: 0 certifications outside dataset slice n=32, with measured hashes for each evaluated example.",
+      "model_degeneracy::How many free parameters were fitted?": "No fitted parameters are used; the gate records 0 learned thresholds and checks the measured dataset slice n=32 against fixed artifact hashes.",
+      "model_degeneracy::Has the model been tested on data not used to tune it?": "The claim is bounded to the held-out dataset slice n=32; it is not claimed beyond that slice, and independent replication would use a second hashed dataset.",
+      "hidden_variable::What variable is not being measured?": "The unmeasured variable is distribution shift outside the dataset; the record names it and refuses claims beyond measured slice n=32.",
+      "hidden_variable::What assumption may be false?": "The assumption that the dataset slice represents all models may be false; the scope is restricted to measured n=32 artifacts only.",
+      "hidden_variable::What would explain the contradiction?": "A contradiction would be explained by an untracked dataset or model version; artifact hashes and measured review counts identify that hidden variable.",
+      "hidden_variable::What data would reveal the missing variable?": "A second independent dataset slice with n=32 examples and measured artifact hashes would reveal whether the boundary holds beyond the first slice."
+    },
+    "human_review": {
+      "kind": "human",
+      "by": "Fixture Reviewer",
+      "date": "2026-06-22",
+      "verdict": "adequate"
+    }
+  },
+  "status": "live",
+  "provenance": {
+    "source_package": "barrier-atlas conformance",
+    "pipeline": "one answer is intentionally weak"
+  },
+  "one_directional": "Weak answers refuse before any human sign-off can certify.",
+  "expected_verdict": "REFUSED",
+  "expected_reason_code": "WEAK_ANSWER"
+}

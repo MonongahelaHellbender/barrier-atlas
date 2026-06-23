@@ -1,0 +1,43 @@
+{
+  "id": "conf-valid-rup",
+  "schema_version": "0.1",
+  "claim": {
+    "statement": "Every 3-coloring of {1,...,27} contains a monochromatic 3-term arithmetic progression.",
+    "kind": "impossibility",
+    "negation_of": "a 3-coloring of {1,...,27} with no monochromatic 3-term arithmetic progression",
+    "scope": "all 3-colorings of [1..27]"
+  },
+  "domain": "conformance/rup",
+  "rung": {
+    "level": "R3",
+    "name": "independent-recomputation",
+    "trusted_base": ["pure-Python RUP checker"]
+  },
+  "certificate": {
+    "kind": "lrat-flat",
+    "path": "certs/samples_w33.cert",
+    "sha256": "f280ae0847138a9e4332446de277ef9e870d27571d33b80d0b3a0f68a7aa4b7a",
+    "meta": { "original_clauses": 615, "proof_steps": 6179 }
+  },
+  "artifacts": [
+    {
+      "id": "w33-cert",
+      "type": "lrat-flat",
+      "role": "certificate",
+      "path": "certs/samples_w33.cert",
+      "sha256": "f280ae0847138a9e4332446de277ef9e870d27571d33b80d0b3a0f68a7aa4b7a"
+    }
+  ],
+  "checker": {
+    "kind": "rup-python",
+    "cert": "certs/samples_w33.cert"
+  },
+  "status": "live",
+  "provenance": {
+    "source_package": "barrier-atlas conformance",
+    "pipeline": "bundled RUP certificate rechecked by the pure-Python checker"
+  },
+  "one_directional": "A bad certificate, missing certificate, or failed proof check refuses.",
+  "expected_verdict": "CERTIFIED",
+  "expected_reason_code": "OK"
+}

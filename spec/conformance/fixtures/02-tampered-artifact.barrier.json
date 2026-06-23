@@ -1,0 +1,43 @@
+{
+  "id": "conf-tampered-artifact",
+  "schema_version": "0.1",
+  "claim": {
+    "statement": "A hash-bound RUP certificate cannot be substituted without refusal.",
+    "kind": "impossibility",
+    "negation_of": "a tampered certificate accepted as the declared artifact",
+    "scope": "one declared certificate path"
+  },
+  "domain": "conformance/artifact",
+  "rung": {
+    "level": "R3",
+    "name": "independent-recomputation",
+    "trusted_base": ["runner artifact hash binding"]
+  },
+  "certificate": {
+    "kind": "lrat-flat",
+    "path": "certs/samples_w33.cert",
+    "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+    "meta": { "original_clauses": 615, "proof_steps": 6179 }
+  },
+  "artifacts": [
+    {
+      "id": "w33-cert",
+      "type": "lrat-flat",
+      "role": "certificate",
+      "path": "certs/samples_w33.cert",
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+    }
+  ],
+  "checker": {
+    "kind": "rup-python",
+    "cert": "certs/samples_w33.cert"
+  },
+  "status": "live",
+  "provenance": {
+    "source_package": "barrier-atlas conformance",
+    "pipeline": "declared artifact hash intentionally mismatches the real file"
+  },
+  "one_directional": "The runner refuses before running the checker when the artifact hash mismatches.",
+  "expected_verdict": "REFUSED",
+  "expected_reason_code": "ARTIFACT_HASH_MISMATCH"
+}

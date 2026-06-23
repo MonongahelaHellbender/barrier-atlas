@@ -1,0 +1,72 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/MonongahelaHellbender/barrier-atlas/spec/verdict-record.schema.json",
+  "title": "Barrier Atlas verdict record v0.1",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "envelope_id",
+    "envelope_sha256",
+    "artifacts",
+    "checker",
+    "raw_checker_verdict",
+    "final_verdict",
+    "final_rung",
+    "reason_code",
+    "detail",
+    "record_core_sha256"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": { "const": "0.1" },
+    "envelope_id": { "type": "string" },
+    "envelope_sha256": { "type": "string" },
+    "artifacts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "path", "sha256", "verified"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string" },
+          "path": { "type": "string" },
+          "sha256": { "type": "string" },
+          "verified": { "type": "boolean" }
+        }
+      }
+    },
+    "checker": {
+      "type": "object",
+      "required": ["kind", "name", "version", "hash"],
+      "additionalProperties": false,
+      "properties": {
+        "kind": { "type": "string" },
+        "name": { "type": "string" },
+        "version": { "type": "string" },
+        "hash": { "type": "string" }
+      }
+    },
+    "raw_checker_verdict": { "enum": ["CERTIFIED", "REFUSED", "DEFERRED", "UNVERIFIABLE-HERE"] },
+    "final_verdict": { "enum": ["CERTIFIED", "REFUSED", "DEFERRED", "UNVERIFIABLE-HERE"] },
+    "final_rung": { "enum": ["R0", "R1", "R2", "R3", "R4", "R5", ""] },
+    "reason_code": {
+      "enum": [
+        "OK",
+        "ARTIFACT_HASH_MISMATCH",
+        "ARTIFACT_MISSING",
+        "PATH_REJECTED",
+        "RUNG_CEILING_EXCEEDED",
+        "RUNG_LAUNDERING",
+        "WEAK_ANSWER",
+        "INCOMPLETE_ANSWERS",
+        "LLM_NOT_A_GATE",
+        "UNKNOWN_CHECKER",
+        "CHECKER_ERROR",
+        "DEFERRED_PENDING_HUMAN",
+        "WEAK_SUBBARRIER"
+      ]
+    },
+    "detail": { "type": "string" },
+    "record_core_sha256": { "type": "string" }
+  }
+}

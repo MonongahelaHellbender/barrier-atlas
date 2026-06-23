@@ -14,26 +14,29 @@ happen, with each entry carrying a machine-checkable certificate at an explicit
 > For a reviewer-facing map of the surrounding public work, see
 > [`PORTFOLIO.md`](PORTFOLIO.md).
 
-## What's here (v0.2)
+## What's here (v0.5)
 
-Nine real barriers, re-checkable from a single envelope format across **five
-different evidence kinds**, with the lower-rung ones honestly deferred:
+Twelve real barriers, re-checkable from a single envelope format across the atlas's
+checker kinds, with the lower-rung ones honestly deferred:
 
 | barrier | claim | rung | checker | status |
 |---|---|---|---|---|
-| `vdw-3-3-le-27` | every 3-coloring of {1..27} has a mono 3-term AP | R2 | `lratcheck` | ✅ live |
-| `vdw-3-3-le-27-r3` | *same claim*, independent re-derivation | R3 | `rup-python` | ✅ live |
-| `ramsey-3-4-le-9` | every 2-coloring of K9 has a red K3 or blue K4 | R2 | `lratcheck` | ✅ live |
-| `nn-robust-2relu-box` | no adversarial example in [-1,1]² flips the class | R0 | `lean-axioms` | ✅ live |
-| `hybrid-schur-vdw-3color-le-13-r2` | no 3-coloring of [13] avoids both Schur triples and 3-term APs | R2 | `lratcheck` | ✅ live |
-| `hybrid-schur-vdw-3color-le-13` | no 3-coloring of [13] avoids both Schur triples and 3-term APs | R3 | `hybrid-schur-vdw-exhaustive` | ✅ live |
-| `combinatorics-two-bounds` | both W(3,3)≤27 **and** R(3,4)≤9 (composed) | R2 | `composed` | ✅ live |
+| `vdw-3-3-le-27` | every 3-coloring of {1..27} has a mono 3-term AP | R2 | `lratcheck` | ✅ certified |
+| `vdw-3-3-le-27-r3` | *same claim*, independent re-derivation | R3 | `rup-python` | ✅ certified |
+| `ramsey-3-4-le-9` | every 2-coloring of K9 has a red K3 or blue K4 | R2 | `lratcheck` | ✅ certified |
+| `nn-robust-2relu-box` | no adversarial example in [-1,1]² flips the class | R0 | `lean-axioms` | ✅ certified |
+| `hybrid-schur-vdw-3color-le-13-r2` | no 3-coloring of [13] avoids both Schur triples and 3-term APs | R2 | `lratcheck` | ✅ certified |
+| `hybrid-schur-vdw-3color-le-13` | same finite hybrid claim, exhaustive recomputation | R3 | `hybrid-schur-vdw-exhaustive` | ✅ certified |
+| `combinatorics-two-bounds` | both W(3,3)≤27 **and** R(3,4)≤9 (composed) | R2 | `composed` | ✅ certified |
+| `chaos-01-test-no-separation` | 0-1 chaos test does not separate conservative vs dissipative systems | R4 | `claim-stress` | ✅ certified |
+| `empirical-and-combinatorial-bundle` | certified R4 empirical barrier composed with an R2 formal barrier | R4 | `composed` | ✅ certified |
+| `hybrid-unavoidable-all-N` | hybrid obstruction extended from threshold to all larger N | R5 | `multi-region` | ⏸ deferred (tail argument) |
 | `mixed-rung-bundle` | mixed bundle — demonstrates min-trust propagation | R4 | `composed` | ⏸ deferred (propagated) |
 | `private-empirical-barrier` | an unpublished empirical barrier (details withheld) | R4 | `manual` | ⏸ deferred (honest) |
 
 ```
 $ python3 tools/barrier_check.py
-  summary: 7 certified, 0 refused, 0 unverifiable-here, 2 deferred
+  summary: 9 certified, 0 refused, 0 unverifiable-here, 3 deferred
   OK: every LIVE barrier re-checked (or honestly degraded).
 ```
 
@@ -57,7 +60,7 @@ $ python3 tools/barrier_check.py
    passing. Tampered cert, missing tool, extra axiom, laundered rung — all fail
    *closed*. This is the same asymmetric safety the barriers themselves have, and it's
    regression-guarded in [`tests/test_one_directional.py`](tests/test_one_directional.py)
-   (11 tests, incl. rung-laundering, encoder-lie refusal, and deterministic RUP
+   (18 tests, incl. rung-laundering, encoder-lie refusal, claim-stress gates, and deterministic RUP
    mutation fuzzing and generated small-cert differential fuzzing against
    `lratcheck` when the sibling binary is available).
 
@@ -88,6 +91,7 @@ It is a new atlas-certified finite result, not a literature-priority claim.
 PLAN.md      vision, rung ladder, composition calculus, roadmap, refinement log
 PORTFOLIO.md public reviewer-facing index across the verification artifacts
 SCHEMA.md    the envelope spec        schema/barrier.schema.json  machine schema
+spec/        v0.1 runner/envelope/conformance seed for bounded assurance claims
 barriers/    one .barrier.json per certified impossibility
 certs/       bundled certificates (sha256-pinned)
 tools/       barrier_check.py — dispatcher; rup_check.py — R3 checker; encoder_check.py — v0 CNF binding; hybrid_schur_vdw_check.py / hybrid_schur_vdw_cert.py — hybrid checker + cert generator
@@ -105,6 +109,8 @@ python3 tools/encoder_check.py certs/hybrid_schur_vdw_3color_13.cert hybrid13
 python3 tools/rup_differential_fuzzer.py  # generated RUP certs vs lratcheck when available
 python3 tools/hybrid_schur_vdw_check.py   # R3 finite hybrid barrier
 python3 tools/hybrid_schur_vdw_cert.py    # R2 hybrid CNF/RUP cert generator
+python3 spec/validate.py                  # validate atlas envelopes + spec fixtures
+python3 spec/conformance/run_conformance.py --runner "python3 tools/spec_runner.py"
 ```
 
 Needs Python 3 (stdlib only). The `lratcheck` entries also need the sibling

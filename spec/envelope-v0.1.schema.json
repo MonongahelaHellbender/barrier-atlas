@@ -1,0 +1,105 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/MonongahelaHellbender/barrier-atlas/spec/envelope-v0.1.schema.json",
+  "title": "Barrier Atlas envelope v0.1",
+  "description": "A bounded claim plus explicit trust rung, evidence artifacts, checker configuration, provenance, and fail-closed discipline.",
+  "type": "object",
+  "required": [
+    "id",
+    "schema_version",
+    "claim",
+    "domain",
+    "rung",
+    "certificate",
+    "checker",
+    "status",
+    "provenance",
+    "one_directional"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "id": { "type": "string", "pattern": "^[a-z0-9_#][a-z0-9_#-]*$" },
+    "schema_version": { "const": "0.1" },
+    "claim": {
+      "type": "object",
+      "required": ["statement", "kind", "negation_of"],
+      "additionalProperties": false,
+      "properties": {
+        "statement": { "type": "string", "minLength": 10 },
+        "kind": { "enum": ["impossibility"] },
+        "negation_of": { "type": "string", "minLength": 3 },
+        "scope": { "type": "string" }
+      }
+    },
+    "domain": { "type": "string", "minLength": 3 },
+    "rung": {
+      "type": "object",
+      "required": ["level", "name", "trusted_base"],
+      "additionalProperties": false,
+      "properties": {
+        "level": { "enum": ["R0", "R1", "R2", "R3", "R4", "R5"] },
+        "name": { "type": "string" },
+        "trusted_base": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "certificate": {
+      "type": "object",
+      "required": ["kind"],
+      "additionalProperties": true,
+      "properties": {
+        "kind": { "type": "string" },
+        "path": { "type": "string" },
+        "sha256": { "type": "string" },
+        "meta": { "type": "object" },
+        "encoder": { "type": "object" }
+      }
+    },
+    "artifacts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "type", "sha256"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "type": { "type": "string", "minLength": 1 },
+          "role": { "type": "string" },
+          "path": { "type": "string" },
+          "uri": { "type": "string" },
+          "sha256": { "type": "string" },
+          "meta": { "type": "object" }
+        }
+      }
+    },
+    "checker": {
+      "type": "object",
+      "required": ["kind"],
+      "additionalProperties": true,
+      "properties": {
+        "kind": { "type": "string", "minLength": 1 },
+        "name": { "type": "string" },
+        "version": { "type": "string" },
+        "hash": { "type": "string" }
+      }
+    },
+    "status": { "enum": ["live", "deferred"] },
+    "provenance": {
+      "type": "object",
+      "required": ["source_package"],
+      "additionalProperties": true,
+      "properties": {
+        "source_package": { "type": "string" },
+        "pipeline": { "type": "string" }
+      }
+    },
+    "one_directional": { "type": "string", "minLength": 10 },
+    "attestations": {
+      "type": "array",
+      "items": { "type": "object", "additionalProperties": true }
+    },
+    "expected_verdict": {
+      "enum": ["CERTIFIED", "REFUSED", "DEFERRED", "UNVERIFIABLE-HERE"]
+    },
+    "expected_reason_code": { "type": "string" }
+  }
+}
