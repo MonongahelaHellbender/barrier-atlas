@@ -1,0 +1,9 @@
+.git
+__pycache__/
+*.pyc
+.fuzz_plugins_*/
+.mutmut-cache/
+mutants/
+SPEC_V0.1_*PLAN.md
+atlas.html
+index.html

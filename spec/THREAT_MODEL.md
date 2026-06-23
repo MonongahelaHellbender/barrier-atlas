@@ -10,6 +10,7 @@ v0.1 makes the runner the small trusted base. Checkers can supply evidence verdi
 | External checker manifest | Missing or malformed manifests cannot dispatch. | `REFUSED` |
 | External checker identity | Entrypoint hash mismatch is detected before execution. | `REFUSED` |
 | External checker timeout | Timeout cannot certify. | `UNVERIFIABLE-HERE` |
+| Malformed checker configuration | Bad timeout values emit one fail-closed record rather than crashing or normalizing to certification. | `UNVERIFIABLE-HERE` |
 | Buggy or malicious checker returns `CERTIFIED` | Runner still enforces artifact hashes and rung rules. | `REFUSED` where structure fails |
 | Hash-pinned malicious checker on a valid envelope | Runner cannot re-derive the evidence; identity and rung ceiling are the controls. | May propose `CERTIFIED` at its rung |
 | Envelope declares a stronger composed rung than earned | Min-trust calculation rejects it. | `REFUSED` |
@@ -26,3 +27,8 @@ Non-guarantees:
 - v0.1 does not verify human expertise.
 - v0.1 does not fetch or authenticate remote artifacts.
 - v0.1 does not make broad AI-system safety claims.
+
+Phase C adds no runtime trusted base. Its deterministic invariant fuzzer and
+mutation-audit policy are CI/developer checks only. The residual assumption is
+coverage: the fuzzer samples the safety-relevant field space, but it is not a
+proof of the runner.

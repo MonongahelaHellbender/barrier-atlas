@@ -129,6 +129,8 @@ The current public artifact has:
 - 9 certified, 0 refused, 3 deferred in the local full-toolchain run;
 - 18 one-directional safety tests;
 - 14 spec conformance fixtures;
+- 2000 deterministic runner-invariant fuzz cases in push/PR CI, plus a scheduled
+  50000-case long run;
 - 3 checker manifests;
 - CI coverage for atlas checks and spec conformance.
 

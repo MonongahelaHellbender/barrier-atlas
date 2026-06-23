@@ -1,0 +1,21 @@
+{
+  "schema_version": "0.1",
+  "python": {
+    "minimum": "3.12",
+    "docker_image": "python:3.12-slim"
+  },
+  "runtime_dependency_policy": {
+    "tools/spec_runner.py": "stdlib-only",
+    "tools/plugin_runner.py": "stdlib-only",
+    "tests/test_invariant_fuzz.py": "stdlib-only"
+  },
+  "optional_tools": [
+    {
+      "id": "lratcheck",
+      "env": "LRATCHECK_BIN",
+      "default": "../dist/lean-verification-journey/.lake/build/bin/lratcheck",
+      "sha256": "7f9a52f3de272cceee05828cdc6d2e942c8c9f3cc70a448e6c842c71b67e6005",
+      "absence_behavior": "barrier_check reports UNVERIFIABLE-HERE for lratcheck barriers rather than certifying"
+    }
+  ]
+}

@@ -23,3 +23,4 @@ Each top-level fixture declares `expected_verdict` and `expected_reason_code`. S
 | `11-checker-hash-mismatch.barrier.json` | The runner refuses a manifest whose entrypoint hash does not match. |
 | `12-liar-tampered-artifact.barrier.json` | A malicious plugin cannot certify a tampered artifact. |
 | `13-liar-illegal-rung.barrier.json` | A malicious plugin cannot certify a stronger returned rung. |
+| `14-malformed-timeout.barrier.json` | Malformed plugin timeout emits a fail-closed record and cannot certify. |

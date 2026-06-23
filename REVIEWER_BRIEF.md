@@ -22,6 +22,9 @@ python3 tools/barrier_check.py
 python3 tests/test_one_directional.py
 # 18 safety tests
 
+python3 tests/test_invariant_fuzz.py
+# 2000 deterministic runner-invariant fuzz cases on push/PR; 50000 on schedule
+
 python3 spec/validate.py
 # validates atlas envelopes, conformance fixtures, and checker manifests
 
@@ -45,6 +48,8 @@ the claim discipline:
 - conformance fixtures include adversarial cases such as tampered artifacts,
   rung laundering, weak empirical answers, unknown checkers, and a deliberately
   lying plugin.
+- a deterministic invariant fuzzer continuously mutates runner inputs and asserts
+  that generated structural violations cannot produce `CERTIFIED`.
 
 The runner, not the checker, owns the final verdict vocabulary and structural gates.
 
@@ -80,6 +85,7 @@ Run the full checks:
 python3 -m py_compile tools/plugin_runner.py tools/spec_runner.py spec/validate.py spec/conformance/run_conformance.py
 python3 spec/validate.py
 python3 spec/conformance/run_conformance.py --runner "python3 tools/plugin_runner.py"
+python3 tests/test_invariant_fuzz.py
 python3 tests/test_one_directional.py
 python3 tools/barrier_check.py
 ```

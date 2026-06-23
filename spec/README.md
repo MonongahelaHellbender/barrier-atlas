@@ -13,6 +13,7 @@ final verdict.
 ```bash
 python3 spec/validate.py
 python3 spec/conformance/run_conformance.py --runner "python3 tools/plugin_runner.py"
+python3 tests/test_invariant_fuzz.py
 ```
 
 ## Pieces
@@ -24,6 +25,7 @@ python3 spec/conformance/run_conformance.py --runner "python3 tools/plugin_runne
 - `runner-contract.md` defines the runner CLI and verdict record.
 - `checker-plugin-contract.md` defines the external plugin contract.
 - `conformance/` is the executable spec seed.
+- `conformance/CONFORMANCE.md` defines implementation-independent runner conformance.
 
 ## AI-Assurance Interpretation
 

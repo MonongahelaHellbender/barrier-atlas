@@ -114,6 +114,7 @@ python3 tools/hybrid_schur_vdw_check.py   # R3 finite hybrid barrier
 python3 tools/hybrid_schur_vdw_cert.py    # R2 hybrid CNF/RUP cert generator
 python3 spec/validate.py                  # validate atlas envelopes + spec fixtures
 python3 spec/conformance/run_conformance.py --runner "python3 tools/plugin_runner.py"
+python3 tests/test_invariant_fuzz.py      # deterministic runner invariant fuzzer
 ```
 
 Needs Python 3 (stdlib only). The `lratcheck` entries also need the sibling
@@ -125,7 +126,8 @@ honestly reports `UNVERIFIABLE-HERE` rather than passing. Override locations wit
 
 v0.5 — public and green: 7 checker kinds (`lratcheck`, `lean-axioms`, `rup-python`,
 `hybrid-schur-vdw-exhaustive`, `composed`, `multi-region`, `claim-stress`), 12 barriers,
-18 safety tests. Highlights: a finite hybrid barrier certified three ways (R2 CNF/RUP +
+18 safety tests plus a 2000-case deterministic runner invariant fuzzer on push/PR
+and a scheduled 50000-case long run. Highlights: a finite hybrid barrier certified three ways (R2 CNF/RUP +
 R3 exhaustive + Lean 4); the **first CERTIFIED R4 empirical barrier** (the chaos
 0-1-test no-go), gated by a three-stage stress contract — completeness → adequacy → a
 **named** human sign-off, never automated correctness

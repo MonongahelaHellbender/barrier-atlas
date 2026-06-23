@@ -4,6 +4,8 @@ on:
   push:
   pull_request:
   workflow_dispatch:
+  schedule:
+    - cron: "17 8 * * *"
 
 jobs:
   check:
@@ -39,6 +41,11 @@ jobs:
         run: |
           python3 spec/validate.py
           python3 spec/conformance/run_conformance.py --runner "python3 tools/plugin_runner.py"
+
+      - name: Invariant fuzzer
+        env:
+          FUZZ_CASES: ${{ github.event_name == 'schedule' && '50000' || '2000' }}
+        run: python3 tests/test_invariant_fuzz.py --cases "$FUZZ_CASES"
 
       # Always-valid invariant on a bare runner: re-checking the atlas must never
       # REFUSE a live barrier. Without the Lean toolchain the lratcheck/lean-axioms
