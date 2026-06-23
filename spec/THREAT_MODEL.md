@@ -11,6 +11,9 @@ v0.1 makes the runner the small trusted base. Checkers can supply evidence verdi
 | External checker identity | Entrypoint hash mismatch is detected before execution. | `REFUSED` |
 | External checker timeout | Timeout cannot certify. | `UNVERIFIABLE-HERE` |
 | Malformed checker configuration | Bad timeout values emit one fail-closed record rather than crashing or normalizing to certification. | `UNVERIFIABLE-HERE` |
+| Required real sandbox unavailable | The runner refuses to dispatch instead of silently using a weaker profile. | `UNVERIFIABLE-HERE` |
+| Quorum member fails or lies | Failed members do not count toward the quorum threshold. | `REFUSED` |
+| Quorum clone / duplicate checker hash | Counted members must have distinct entrypoint hashes; duplicate extras do not poison a quorum already met by distinct hashes. | `REFUSED` when distinct threshold is not met |
 | Buggy or malicious checker returns `CERTIFIED` | Runner still enforces artifact hashes and rung rules. | `REFUSED` where structure fails |
 | Hash-pinned malicious checker on a valid envelope | Runner cannot re-derive the evidence; identity and rung ceiling are the controls. | May propose `CERTIFIED` at its rung |
 | Envelope declares a stronger composed rung than earned | Min-trust calculation rejects it. | `REFUSED` |
@@ -19,16 +22,23 @@ v0.1 makes the runner the small trusted base. Checkers can supply evidence verdi
 | Non-human review says an empirical answer is adequate | Non-human review can screen only, never certify correctness. | `DEFERRED` |
 | Named human verdict | Attributable and auditable, not mechanically verified. | Human trust base is explicit |
 
+Trusted-base additions in Phase D:
+
+- `tools/sandbox.py` is trusted to apply the recorded process profile. The portable
+  `env-restricted` profile scrubs environment and cwd but is not a real OS sandbox.
+- Quorum independence is asserted by distinct entrypoint hashes and member metadata;
+  it is not proof of semantic independence.
+
 Non-guarantees:
 
-- v0.1 is not a sandbox.
+- v0.1's portable profile is not a real OS sandbox.
 - v0.1 does not prove a hash-pinned plugin is honest.
+- v0.1 does not prove hash-distinct quorum members are semantically independent.
 - v0.1 does not prove empirical claims true.
 - v0.1 does not verify human expertise.
 - v0.1 does not fetch or authenticate remote artifacts.
 - v0.1 does not make broad AI-system safety claims.
 
-Phase C adds no runtime trusted base. Its deterministic invariant fuzzer and
-mutation-audit policy are CI/developer checks only. The residual assumption is
-coverage: the fuzzer samples the safety-relevant field space, but it is not a
-proof of the runner.
+Phase C added no runtime trusted base. Phase D's composite-aware fuzzer now samples
+composed, multi-region, and quorum cases, shrinking the coverage residual. It is
+still a fuzzer, not a proof of the runner.

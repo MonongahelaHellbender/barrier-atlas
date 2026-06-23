@@ -29,7 +29,7 @@ python3 spec/validate.py
 # validates atlas envelopes, conformance fixtures, and checker manifests
 
 python3 spec/conformance/run_conformance.py --runner "python3 tools/plugin_runner.py"
-# 14 conformance fixtures
+# 19 conformance fixtures
 ```
 
 CI runs those load-bearing checks on every push.
@@ -45,6 +45,9 @@ the claim discipline:
 - composed claims inherit their weakest rung;
 - non-human empirical review can screen but cannot certify;
 - external checker plugins are hash-pinned and can only propose verdicts;
+- plugins run with an explicitly recorded sandbox profile (`env-restricted` by
+  default; required real sandbox profiles fail closed when unavailable);
+- quorum claims require enough independent certifying checker hashes;
 - conformance fixtures include adversarial cases such as tampered artifacts,
   rung laundering, weak empirical answers, unknown checkers, and a deliberately
   lying plugin.
@@ -64,16 +67,18 @@ claim above its earned trust base.
 
 Barrier Atlas is not a broad standard, not a production certification system, and
 not a guarantee about real-world AI-system behavior. The runner is not formally
-verified. External plugins are not sandboxed. Empirical R4 entries remain empirical:
-they can be made attributable and stress-tested, but not theorem-like.
+verified. External plugins run under a recorded `env-restricted` profile, not a
+real OS sandbox. Empirical R4 entries remain empirical: they can be made
+attributable and stress-tested, but not theorem-like.
 
 ## Best 10-Minute Review Path
 
 1. Read [`spec/DESIGN_CLAIMS_AND_LIMITS.md`](spec/DESIGN_CLAIMS_AND_LIMITS.md).
 2. Run `python3 spec/conformance/run_conformance.py --runner "python3 tools/plugin_runner.py"`.
-3. Inspect fixtures 10-14 in [`spec/conformance/fixtures`](spec/conformance/fixtures):
+3. Inspect fixtures 10-19 in [`spec/conformance/fixtures`](spec/conformance/fixtures):
    external RUP plugin, checker hash mismatch, liar over tampered artifact, and liar
-   illegal rung, plus malformed plugin timeout.
+   illegal rung, malformed plugin timeout, quorum met/not-met/not-independent,
+   unavailable required sandbox, and duplicate-plus-distinct quorum.
 4. Read [`tools/plugin_runner.py`](tools/plugin_runner.py), especially the manifest
    hash check, artifact staging, and returned-rung validation.
 
@@ -91,5 +96,6 @@ python3 tools/barrier_check.py
 ```
 
 Then try to break the invariant: no tampered artifact, weak sub-barrier, non-human
-empirical sign-off, over-strong rung, unknown checker, bad manifest hash, or lying
-plugin should produce `CERTIFIED`.
+empirical sign-off, over-strong rung, unknown checker, bad manifest hash, lying
+plugin, non-independent quorum, or unavailable required sandbox should produce
+`CERTIFIED`.

@@ -1,0 +1,8 @@
+{
+  "name": "barrier-atlas-rup-alt",
+  "version": "0.1",
+  "kind": "external-rup",
+  "command": ["python3", "tools/checkers/rup_plugin_alt.py"],
+  "entrypoint": "tools/checkers/rup_plugin_alt.py",
+  "sha256": "a69093e009351457981b55b22e42159048cd06d424b738afe0fce570199925db"
+}

@@ -1,0 +1,52 @@
+{
+  "id": "conf-quorum-not-independent",
+  "schema_version": "0.1",
+  "claim": {
+    "statement": "A quorum cannot be faked by counting the same checker entrypoint twice.",
+    "kind": "impossibility",
+    "negation_of": "a quorum result whose counted members share the same checker hash",
+    "scope": "two references to the same external RUP plugin"
+  },
+  "domain": "conformance/quorum",
+  "rung": {
+    "level": "R3",
+    "name": "external-quorum",
+    "trusted_base": ["runner quorum independence guard"]
+  },
+  "certificate": { "kind": "quorum-rup" },
+  "artifacts": [
+    {
+      "id": "certificate",
+      "type": "lrat-flat",
+      "role": "certificate",
+      "path": "certs/samples_w33.cert",
+      "sha256": "f280ae0847138a9e4332446de277ef9e870d27571d33b80d0b3a0f68a7aa4b7a"
+    }
+  ],
+  "checker": {
+    "kind": "quorum",
+    "quorum": {
+      "required": 2,
+      "members": [
+        {
+          "kind": "external-rup",
+          "manifest": "spec/checkers/rup.manifest.json",
+          "cert_artifact": "certificate"
+        },
+        {
+          "kind": "external-rup",
+          "manifest": "spec/checkers/rup.manifest.json",
+          "cert_artifact": "certificate"
+        }
+      ]
+    }
+  },
+  "status": "live",
+  "provenance": {
+    "source_package": "barrier-atlas conformance",
+    "pipeline": "same manifest is intentionally counted twice"
+  },
+  "one_directional": "Distinct quorum members must have distinct entrypoint hashes before they can certify.",
+  "expected_verdict": "REFUSED",
+  "expected_reason_code": "QUORUM_NOT_INDEPENDENT"
+}

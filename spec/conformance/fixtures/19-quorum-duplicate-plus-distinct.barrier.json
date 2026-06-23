@@ -1,0 +1,57 @@
+{
+  "id": "conf-quorum-duplicate-plus-distinct",
+  "schema_version": "0.1",
+  "claim": {
+    "statement": "Duplicate quorum members do not poison certification when enough distinct checker hashes still certify.",
+    "kind": "impossibility",
+    "negation_of": "a quorum implementation that refuses a valid threshold because an extra duplicate member appeared",
+    "scope": "three external RUP members, two distinct hashes, threshold two"
+  },
+  "domain": "conformance/quorum",
+  "rung": {
+    "level": "R3",
+    "name": "external-quorum",
+    "trusted_base": ["runner quorum discipline", "two hash-distinct external RUP plugins"]
+  },
+  "certificate": { "kind": "quorum-rup" },
+  "artifacts": [
+    {
+      "id": "certificate",
+      "type": "lrat-flat",
+      "role": "certificate",
+      "path": "certs/samples_w33.cert",
+      "sha256": "f280ae0847138a9e4332446de277ef9e870d27571d33b80d0b3a0f68a7aa4b7a"
+    }
+  ],
+  "checker": {
+    "kind": "quorum",
+    "quorum": {
+      "required": 2,
+      "members": [
+        {
+          "kind": "external-rup",
+          "manifest": "spec/checkers/rup.manifest.json",
+          "cert_artifact": "certificate"
+        },
+        {
+          "kind": "external-rup",
+          "manifest": "spec/checkers/rup.manifest.json",
+          "cert_artifact": "certificate"
+        },
+        {
+          "kind": "external-rup",
+          "manifest": "spec/checkers/rup-alt.manifest.json",
+          "cert_artifact": "certificate"
+        }
+      ]
+    }
+  },
+  "status": "live",
+  "provenance": {
+    "source_package": "barrier-atlas conformance",
+    "pipeline": "one duplicate plus one independent plugin still gives two distinct certifying checker hashes"
+  },
+  "one_directional": "Quorum counts distinct certifying checker hashes; duplicates neither fake nor poison independence.",
+  "expected_verdict": "CERTIFIED",
+  "expected_reason_code": "OK"
+}

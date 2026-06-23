@@ -24,3 +24,8 @@ Each top-level fixture declares `expected_verdict` and `expected_reason_code`. S
 | `12-liar-tampered-artifact.barrier.json` | A malicious plugin cannot certify a tampered artifact. |
 | `13-liar-illegal-rung.barrier.json` | A malicious plugin cannot certify a stronger returned rung. |
 | `14-malformed-timeout.barrier.json` | Malformed plugin timeout emits a fail-closed record and cannot certify. |
+| `15-quorum-met.barrier.json` | Two hash-distinct external RUP plugins can meet quorum. |
+| `16-quorum-not-met.barrier.json` | A refused or lying member cannot help quorum certify. |
+| `17-quorum-not-independent.barrier.json` | Cloning one checker hash cannot fake quorum independence. |
+| `18-sandbox-required-unavailable.barrier.json` | Required real sandbox unavailable degrades to unverifiable, never certified. |
+| `19-quorum-duplicate-plus-distinct.barrier.json` | An extra duplicate member does not poison a quorum already met by distinct hashes. |

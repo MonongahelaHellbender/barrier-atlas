@@ -5,7 +5,9 @@ python3 tools/toolchain_check.py
 python3 -m py_compile \
   tools/barrier_check.py \
   tools/plugin_runner.py \
+  tools/sandbox.py \
   tools/spec_runner.py \
+  tools/checkers/rup_plugin_alt.py \
   spec/validate.py \
   spec/conformance/run_conformance.py \
   tests/test_invariant_fuzz.py

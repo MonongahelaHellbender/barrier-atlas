@@ -21,7 +21,7 @@ of the atlas: a claim of impossibility plus everything needed to *re-check it* a
 | `certificate.path` |  | path to the cert artifact, if any (relative to atlas root) |
 | `certificate.meta` |  | free dict (step counts, sizes, source theorem name, …) |
 | `certificate.encoder` |  | optional claim-to-CNF generator spec; when present, the parsed cert formula must exactly match the regenerated clauses |
-| `checker.kind` | ✓ | how to re-check: `lratcheck`, `lean-axioms`, `rup-python`, `hybrid-schur-vdw-exhaustive`, `composed`, `multi-region`, `claim-stress`, or `manual` (deferred) |
+| `checker.kind` | ✓ | how to re-check: `lratcheck`, `lean-axioms`, `rup-python`, `external-rup`, `hybrid-schur-vdw-exhaustive`, `composed`, `multi-region`, `quorum`, `claim-stress`, or `manual` (deferred) |
 | `checker.*` | ✓ | kind-specific config (see below) |
 | `status` | ✓ | `"live"` (auto-checkable now) or `"deferred"` (registered, recipe given) |
 | `provenance` | ✓ | where the artifact came from (source package, generation pipeline) |
@@ -121,6 +121,20 @@ R2: you trust the Python exhaustive checker and the declared finite spec. The
 same finite claim also has a separate R2 `lratcheck` entry when the CNF/RUP
 certificate and `hybrid_schur_vdw_cnf` encoder binding verify.
 
+### `external-rup` (rung R3 — hash-pinned external plugin)
+```json
+"checker": {
+  "kind": "external-rup",
+  "manifest": "spec/checkers/rup.manifest.json",
+  "cert_artifact": "certificate"
+}
+```
+The plugin-capable runner verifies the checker manifest, recomputes the entrypoint
+hash, stages verified artifacts into a temp directory, runs the plugin with an
+explicit sandbox profile, validates the returned verdict/rung, and then emits the
+final verdict. If `requires_sandbox: true` is set and a real sandbox profile is
+unavailable, the result is `UNVERIFIABLE-HERE / SANDBOX_UNAVAILABLE`.
+
 ### `composed` (rung = min-trust of the parts)
 ```json
 "checker": {
@@ -151,6 +165,25 @@ One impossibility claim whose domain is partitioned into regions, each with its 
 (min-trust)** region's rung. Any failed/deferred region propagates (most-severe wins);
 a declared rung stronger than the weakest region fails closed. Unlike `composed`
 (separate claims by `id`), the regions are inline parts of a single claim.
+
+### `quorum` (rung = declared rung if enough independent members certify)
+```json
+"checker": {
+  "kind": "quorum",
+  "quorum": {
+    "required": 2,
+    "members": [
+      { "kind": "external-rup", "manifest": "spec/checkers/rup.manifest.json", "cert_artifact": "certificate" },
+      { "kind": "external-rup", "manifest": "spec/checkers/rup-alt.manifest.json", "cert_artifact": "certificate" }
+    ]
+  }
+}
+```
+The plugin-capable runner checks every member against the same declared artifacts.
+`CERTIFIED` requires at least `required` certifying members at the declared rung or
+stronger, and counted members must have distinct checker hashes. This is an
+asserted independence guard, not a proof of semantic independence. A failed member
+returns `QUORUM_NOT_MET`; duplicate counted hashes return `QUORUM_NOT_INDEPENDENT`.
 
 ### `claim-stress` (rung R4/R5 — empirical, named-human gate)
 ```json

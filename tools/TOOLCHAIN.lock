@@ -7,6 +7,7 @@
   "runtime_dependency_policy": {
     "tools/spec_runner.py": "stdlib-only",
     "tools/plugin_runner.py": "stdlib-only",
+    "tools/sandbox.py": "stdlib-only",
     "tests/test_invariant_fuzz.py": "stdlib-only"
   },
   "optional_tools": [

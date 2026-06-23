@@ -32,13 +32,15 @@ Evidence:
 
 Atomic checker kinds have maximum rungs. `rup-python` and `external-rup` cannot
 certify above R3. Composed and multi-region claims compute their final rung from
-their weakest part.
+their weakest part. Quorum claims require enough independent certifying checker
+hashes.
 
 Evidence:
 
 - `06-rung-laundering.barrier.json`
 - `09-atomic-rung-over-ceiling.barrier.json`
 - `13-liar-illegal-rung.barrier.json`
+- `17-quorum-not-independent.barrier.json`
 
 ### 3. Conformance checks reason, not only verdict
 
@@ -62,7 +64,8 @@ can vary without changing the audit core.
 
 External checker plugins run as separate executables. The runner verifies the
 manifest, computes the entrypoint hash itself, stages only verified artifacts, runs
-the plugin, validates the plugin output, and then emits the final verdict.
+the plugin with an explicit sandbox profile, validates the plugin output, and then
+emits the final verdict.
 
 Evidence:
 
@@ -70,6 +73,21 @@ Evidence:
 - `11-checker-hash-mismatch.barrier.json`
 - `12-liar-tampered-artifact.barrier.json`
 - `13-liar-illegal-rung.barrier.json`
+- `18-sandbox-required-unavailable.barrier.json`
+
+### 6. Quorum certification is runner-owned
+
+A quorum claim certifies only when the declared threshold is met by certifying
+members with distinct checker hashes. Cloned members cannot launder one checker
+into independent corroboration, and extra duplicate members do not poison a
+threshold that is already met by distinct hashes.
+
+Evidence:
+
+- `15-quorum-met.barrier.json`
+- `16-quorum-not-met.barrier.json`
+- `17-quorum-not-independent.barrier.json`
+- `19-quorum-duplicate-plus-distinct.barrier.json`
 
 ## Trusted Base
 
@@ -78,7 +96,8 @@ The trusted base is explicit, not hidden.
 | component | role | trust status |
 |---|---|---|
 | `tools/spec_runner.py` | Phase A runner: artifacts, rung ceilings, composition, verdict records | trusted v0.1 runner code |
-| `tools/plugin_runner.py` | Phase B external plugin dispatch and identity checks | trusted v0.1 runner code |
+| `tools/plugin_runner.py` | Phase B/D external plugin dispatch, identity checks, quorum discipline | trusted v0.1 runner code |
+| `tools/sandbox.py` | Phase D env-restricted subprocess profile and required-sandbox refusal | trusted v0.1 runner code |
 | in-process checkers | interpret specific evidence kinds | trusted according to declared rung |
 | external plugins | propose evidence verdicts | trusted only by manifest identity and rung |
 | `tools/barrier_check.py` | atlas dispatcher for live barriers | trusted by checker kind and tests |
@@ -95,15 +114,17 @@ Barrier Atlas v0.1 does not claim:
 - broad standards authority;
 - real-world model-behavior guarantees;
 - formal verification of the runner;
-- sandboxing for external plugins;
+- a real OS sandbox for external plugins in the portable default profile;
 - proof that a hash-pinned plugin is honest;
+- proof that hash-distinct quorum members are semantically independent;
 - theorem-like truth for empirical R4 claims;
 - literature priority for the finite hybrid Schur/vdW result.
 
 The plugin boundary is especially important: a hash-pinned malicious plugin cannot
 certify a tampered artifact or a rung stronger than it is allowed to earn, but it
 can still return `CERTIFIED` on a structurally valid envelope. The controls are
-identity, artifact binding, and rung discipline, not magical plugin honesty.
+identity, artifact binding, rung discipline, sandbox-profile transparency, and
+quorum thresholds, not magical plugin honesty.
 
 ## Failure Modes Reviewers Should Probe
 
@@ -115,6 +136,8 @@ Good reviews should try to break these invariants:
 - return a plugin rung stronger than the declared rung;
 - corrupt the checker manifest hash;
 - make a plugin emit garbage JSON, illegal verdicts, or timeout;
+- require a real sandbox profile that is unavailable;
+- clone the same checker entrypoint twice and try to count it as quorum;
 - replace a named human review with a non-human reviewer;
 - compose a certified strong barrier with a deferred weak one and try to keep the
   stronger rung.
@@ -128,10 +151,10 @@ The current public artifact has:
 - 12 atlas barriers;
 - 9 certified, 0 refused, 3 deferred in the local full-toolchain run;
 - 18 one-directional safety tests;
-- 14 spec conformance fixtures;
+- 19 spec conformance fixtures;
 - 2000 deterministic runner-invariant fuzz cases in push/PR CI, plus a scheduled
   50000-case long run;
-- 3 checker manifests;
+- 4 checker manifests;
 - CI coverage for atlas checks and spec conformance.
 
 ## Next Review Priorities
@@ -143,6 +166,6 @@ The highest-value next reviews are:
 2. independent implementation of the conformance runner contract;
 3. tightening reason-code classification so fewer cases depend on checker-detail
    text;
-4. a small formal model of the rung ceiling and min-trust calculus;
-5. later, sandboxing or signing, if external plugin execution becomes more than a
-   local prototype.
+4. a small formal model of the rung ceiling, min-trust, and quorum calculus;
+5. later, a real OS sandbox profile or signing, if external plugin execution becomes
+   more than a local prototype.

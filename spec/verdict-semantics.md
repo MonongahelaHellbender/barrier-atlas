@@ -18,4 +18,4 @@ Severity propagation:
 
 The checker may return a raw verdict. The runner emits the final verdict. The runner never upgrades a checker verdict.
 
-Reason codes are closed so a conformance implementation cannot pass by failing for the wrong reason: `OK`, `ARTIFACT_HASH_MISMATCH`, `ARTIFACT_MISSING`, `PATH_REJECTED`, `RUNG_CEILING_EXCEEDED`, `RUNG_LAUNDERING`, `WEAK_ANSWER`, `INCOMPLETE_ANSWERS`, `LLM_NOT_A_GATE`, `UNKNOWN_CHECKER`, `CHECKER_ERROR`, `MANIFEST_INVALID`, `CHECKER_HASH_MISMATCH`, `CHECKER_TIMEOUT`, `DEFERRED_PENDING_HUMAN`, and `WEAK_SUBBARRIER`.
+Reason codes are closed so a conformance implementation cannot pass by failing for the wrong reason: `OK`, `ARTIFACT_HASH_MISMATCH`, `ARTIFACT_MISSING`, `PATH_REJECTED`, `RUNG_CEILING_EXCEEDED`, `RUNG_LAUNDERING`, `WEAK_ANSWER`, `INCOMPLETE_ANSWERS`, `LLM_NOT_A_GATE`, `UNKNOWN_CHECKER`, `CHECKER_ERROR`, `MANIFEST_INVALID`, `CHECKER_HASH_MISMATCH`, `CHECKER_TIMEOUT`, `SANDBOX_UNAVAILABLE`, `QUORUM_NOT_MET`, `QUORUM_NOT_INDEPENDENT`, `DEFERRED_PENDING_HUMAN`, and `WEAK_SUBBARRIER`.

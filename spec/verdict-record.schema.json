@@ -65,11 +65,36 @@
         "MANIFEST_INVALID",
         "CHECKER_HASH_MISMATCH",
         "CHECKER_TIMEOUT",
+        "SANDBOX_UNAVAILABLE",
+        "QUORUM_NOT_MET",
+        "QUORUM_NOT_INDEPENDENT",
         "DEFERRED_PENDING_HUMAN",
         "WEAK_SUBBARRIER"
       ]
     },
     "detail": { "type": "string" },
+    "sandbox": {
+      "type": "object",
+      "required": ["profile", "required"],
+      "additionalProperties": false,
+      "properties": {
+        "profile": { "type": "string" },
+        "required": { "type": "boolean" }
+      }
+    },
+    "quorum": {
+      "type": "object",
+      "required": ["required", "met", "members"],
+      "additionalProperties": false,
+      "properties": {
+        "required": { "type": "integer" },
+        "met": { "type": "boolean" },
+        "members": {
+          "type": "array",
+          "items": { "type": "object", "additionalProperties": true }
+        }
+      }
+    },
     "record_core_sha256": { "type": "string" }
   }
 }

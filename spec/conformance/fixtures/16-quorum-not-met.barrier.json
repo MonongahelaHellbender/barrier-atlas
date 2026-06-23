@@ -1,0 +1,52 @@
+{
+  "id": "conf-quorum-not-met",
+  "schema_version": "0.1",
+  "claim": {
+    "statement": "A quorum cannot certify when one required member refuses upstream.",
+    "kind": "impossibility",
+    "negation_of": "a quorum result where a lying or refused member still satisfies the threshold",
+    "scope": "one honest RUP plugin plus one malicious plugin"
+  },
+  "domain": "conformance/quorum",
+  "rung": {
+    "level": "R3",
+    "name": "external-quorum",
+    "trusted_base": ["runner quorum discipline", "malicious plugin fixture"]
+  },
+  "certificate": { "kind": "quorum-rup" },
+  "artifacts": [
+    {
+      "id": "certificate",
+      "type": "lrat-flat",
+      "role": "certificate",
+      "path": "certs/samples_w33.cert",
+      "sha256": "f280ae0847138a9e4332446de277ef9e870d27571d33b80d0b3a0f68a7aa4b7a"
+    }
+  ],
+  "checker": {
+    "kind": "quorum",
+    "quorum": {
+      "required": 2,
+      "members": [
+        {
+          "kind": "external-rup",
+          "manifest": "spec/checkers/rup.manifest.json",
+          "cert_artifact": "certificate"
+        },
+        {
+          "kind": "external-rup",
+          "manifest": "spec/checkers/liar.manifest.json",
+          "cert_artifact": "certificate"
+        }
+      ]
+    }
+  },
+  "status": "live",
+  "provenance": {
+    "source_package": "barrier-atlas conformance",
+    "pipeline": "liar member returns an illegal stronger rung and cannot be counted"
+  },
+  "one_directional": "A refused quorum member cannot help reach the certification threshold.",
+  "expected_verdict": "REFUSED",
+  "expected_reason_code": "QUORUM_NOT_MET"
+}

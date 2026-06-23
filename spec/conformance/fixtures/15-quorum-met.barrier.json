@@ -1,0 +1,52 @@
+{
+  "id": "conf-quorum-met",
+  "schema_version": "0.1",
+  "claim": {
+    "statement": "Two independent hash-pinned external RUP plugins can certify the same bounded certificate as a quorum.",
+    "kind": "impossibility",
+    "negation_of": "a quorum result without two independent positive evidence checks",
+    "scope": "one W(3,3) certificate checked by two distinct plugin entrypoints"
+  },
+  "domain": "conformance/quorum",
+  "rung": {
+    "level": "R3",
+    "name": "external-quorum",
+    "trusted_base": ["runner quorum discipline", "two hash-distinct external RUP plugins"]
+  },
+  "certificate": { "kind": "quorum-rup" },
+  "artifacts": [
+    {
+      "id": "certificate",
+      "type": "lrat-flat",
+      "role": "certificate",
+      "path": "certs/samples_w33.cert",
+      "sha256": "f280ae0847138a9e4332446de277ef9e870d27571d33b80d0b3a0f68a7aa4b7a"
+    }
+  ],
+  "checker": {
+    "kind": "quorum",
+    "quorum": {
+      "required": 2,
+      "members": [
+        {
+          "kind": "external-rup",
+          "manifest": "spec/checkers/rup.manifest.json",
+          "cert_artifact": "certificate"
+        },
+        {
+          "kind": "external-rup",
+          "manifest": "spec/checkers/rup-alt.manifest.json",
+          "cert_artifact": "certificate"
+        }
+      ]
+    }
+  },
+  "status": "live",
+  "provenance": {
+    "source_package": "barrier-atlas conformance",
+    "pipeline": "same staged artifact checked by two hash-distinct external RUP plugins"
+  },
+  "one_directional": "The runner certifies only if the quorum threshold is met by independent certifying members.",
+  "expected_verdict": "CERTIFIED",
+  "expected_reason_code": "OK"
+}

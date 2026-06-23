@@ -4,9 +4,9 @@ A refusal-first certification envelope for bounded scientific and AI-assurance c
 
 The spec separates claims, artifacts, checker behavior, trust rungs, and final verdicts. The runner is the small trusted base: it binds artifacts by hash, rejects path escapes, enforces rung ceilings and min-trust composition, and emits a reproducible verdict record.
 
-v0.1 also supports hash-pinned external checker plugins. Plugins propose verdicts;
-the runner still owns artifact binding, checker identity, rung discipline, and the
-final verdict.
+v0.1 also supports hash-pinned external checker plugins and quorum claims. Plugins
+propose verdicts; the runner still owns artifact binding, checker identity, sandbox
+profile recording, rung discipline, quorum thresholds, and the final verdict.
 
 ## Run
 
@@ -40,4 +40,4 @@ python3 tests/test_invariant_fuzz.py
 
 ## What This Is Not
 
-v0.1 is not a broad standard, not a guarantee about AI-system safety, not a security-product credential, and not a production certification system. It is not a plugin sandbox: running an external plugin executes code on the host. It is a small runner/envelope/conformance seed that makes bounded claims more inspectable and easier to refuse honestly.
+v0.1 is not a broad standard, not a guarantee about AI-system safety, not a security-product credential, and not a production certification system. The portable plugin profile is `env-restricted`, not a real OS sandbox: running an external plugin still executes code on the host. It is a small runner/envelope/conformance seed that makes bounded claims more inspectable and easier to refuse honestly.

@@ -47,6 +47,9 @@ REASON_CODES = {
     "MANIFEST_INVALID",
     "CHECKER_HASH_MISMATCH",
     "CHECKER_TIMEOUT",
+    "SANDBOX_UNAVAILABLE",
+    "QUORUM_NOT_MET",
+    "QUORUM_NOT_INDEPENDENT",
     "DEFERRED_PENDING_HUMAN",
     "WEAK_SUBBARRIER",
 }
@@ -58,18 +61,20 @@ CHECKER_IMPL_FILES = {
     "claim-stress": "tools/claim_stress_check.py",
     "composed": "tools/spec_runner.py",
     "multi-region": "tools/spec_runner.py",
+    "quorum": "tools/plugin_runner.py",
     "manual": "tools/spec_runner.py",
 }
 
 class Result:
     def __init__(self, final_verdict, reason_code, detail, raw_verdict=None,
-                 final_rung=None, artifacts=None):
+                 final_rung=None, artifacts=None, extra=None):
         self.final_verdict = final_verdict
         self.reason_code = reason_code
         self.detail = detail
         self.raw_verdict = raw_verdict or final_verdict
         self.final_rung = final_rung
         self.artifacts = artifacts or []
+        self.extra = extra or {}
 
 
 def _sha256_file(path: Path) -> str:
@@ -352,7 +357,7 @@ def _record_core(record: dict) -> dict:
          for a in record.get("artifacts", [])),
         key=lambda a: a["id"],
     )
-    return {
+    core = {
         "schema_version": record["schema_version"],
         "envelope_id": record["envelope_id"],
         "envelope_sha256": record["envelope_sha256"],
@@ -368,6 +373,10 @@ def _record_core(record: dict) -> dict:
         "final_rung": record["final_rung"],
         "reason_code": record["reason_code"],
     }
+    for key in ("sandbox", "quorum"):
+        if key in record:
+            core[key] = record[key]
+    return core
 
 
 def _core_hash(record: dict) -> str:
@@ -391,6 +400,7 @@ def make_record(env: dict, envelope_path: Path, result: Result) -> dict:
         "reason_code": result.reason_code,
         "detail": result.detail,
     }
+    record.update(result.extra)
     if record["reason_code"] not in REASON_CODES:
         record["final_verdict"] = UNVERIFIABLE
         record["reason_code"] = "CHECKER_ERROR"

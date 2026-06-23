@@ -17,9 +17,14 @@ import tempfile
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+import sandbox  # noqa: E402
 import spec_runner  # noqa: E402
 
 ATLAS_ROOT = spec_runner.ATLAS_ROOT
+
+
+def _sandbox_record(profile: sandbox.SandboxProfile) -> dict:
+    return {"sandbox": profile.record()}
 
 
 def _safe_repo_path(raw: str) -> Path | None:
@@ -204,6 +209,17 @@ def _run_plugin(env: dict, envelope_path: Path, manifest: dict) -> spec_runner.R
             final_rung=declared,
         )
 
+    profile = sandbox.choose_profile(bool(env.get("checker", {}).get("requires_sandbox")))
+    if not profile.available:
+        return spec_runner.Result(
+            spec_runner.UNVERIFIABLE,
+            "SANDBOX_UNAVAILABLE",
+            "checker requires a real sandbox profile, but none is available here",
+            raw_verdict=spec_runner.UNVERIFIABLE,
+            final_rung=declared,
+            extra=_sandbox_record(profile),
+        )
+
     with tempfile.TemporaryDirectory(prefix="barrier-plugin-") as td:
         temp_dir = Path(td)
         staged_error = _stage_artifacts(env, envelope_path, temp_dir)
@@ -225,8 +241,7 @@ def _run_plugin(env: dict, envelope_path: Path, manifest: dict) -> spec_runner.R
             command.append(resolved)
         command += ["--envelope", str(staged_envelope), "--artifacts-dir", str(temp_dir)]
         try:
-            proc = subprocess.run(command, cwd=str(ATLAS_ROOT), capture_output=True,
-                                  text=True, timeout=timeout)
+            proc = sandbox.run(command, cwd=temp_dir, timeout=timeout, profile=profile)
         except subprocess.TimeoutExpired:
             return spec_runner.Result(
                 spec_runner.UNVERIFIABLE,
@@ -234,6 +249,7 @@ def _run_plugin(env: dict, envelope_path: Path, manifest: dict) -> spec_runner.R
                 f"checker timed out after {timeout}s",
                 raw_verdict=spec_runner.UNVERIFIABLE,
                 final_rung=declared,
+                extra=_sandbox_record(profile),
             )
         except Exception as e:  # noqa: BLE001
             return spec_runner.Result(
@@ -242,6 +258,7 @@ def _run_plugin(env: dict, envelope_path: Path, manifest: dict) -> spec_runner.R
                 f"could not run checker: {e}",
                 raw_verdict=spec_runner.UNVERIFIABLE,
                 final_rung=declared,
+                extra=_sandbox_record(profile),
             )
 
     if proc.returncode != 0:
@@ -251,6 +268,7 @@ def _run_plugin(env: dict, envelope_path: Path, manifest: dict) -> spec_runner.R
             f"checker exited nonzero ({proc.returncode})",
             raw_verdict=spec_runner.UNVERIFIABLE,
             final_rung=declared,
+            extra=_sandbox_record(profile),
         )
     try:
         output = json.loads(proc.stdout.strip())
@@ -261,6 +279,7 @@ def _run_plugin(env: dict, envelope_path: Path, manifest: dict) -> spec_runner.R
             f"checker stdout was not one JSON verdict: {e}",
             raw_verdict=spec_runner.UNVERIFIABLE,
             final_rung=declared,
+            extra=_sandbox_record(profile),
         )
 
     if not isinstance(output, dict):
@@ -270,6 +289,7 @@ def _run_plugin(env: dict, envelope_path: Path, manifest: dict) -> spec_runner.R
             "checker stdout was not a JSON object",
             raw_verdict=spec_runner.UNVERIFIABLE,
             final_rung=declared,
+            extra=_sandbox_record(profile),
         )
     verdict = output.get("verdict")
     detail = str(output.get("detail", ""))
@@ -281,6 +301,7 @@ def _run_plugin(env: dict, envelope_path: Path, manifest: dict) -> spec_runner.R
             "checker emitted an illegal verdict object",
             raw_verdict=spec_runner.UNVERIFIABLE,
             final_rung=declared,
+            extra=_sandbox_record(profile),
         )
     if ceiling and spec_runner._stronger_than(returned_rung, ceiling):
         return spec_runner.Result(
@@ -289,6 +310,7 @@ def _run_plugin(env: dict, envelope_path: Path, manifest: dict) -> spec_runner.R
             f"checker returned rung {returned_rung} stronger than {kind} ceiling {ceiling}",
             raw_verdict=verdict,
             final_rung=declared,
+            extra=_sandbox_record(profile),
         )
     if declared and spec_runner._stronger_than(returned_rung, declared):
         return spec_runner.Result(
@@ -297,12 +319,131 @@ def _run_plugin(env: dict, envelope_path: Path, manifest: dict) -> spec_runner.R
             f"checker returned rung {returned_rung} stronger than declared {declared}",
             raw_verdict=verdict,
             final_rung=declared,
+            extra=_sandbox_record(profile),
         )
     return spec_runner.Result(verdict, "OK" if verdict == spec_runner.CERTIFIED else "CHECKER_ERROR",
-                              detail, raw_verdict=verdict, final_rung=declared)
+                              detail, raw_verdict=verdict, final_rung=declared,
+                              extra=_sandbox_record(profile))
+
+
+def _member_identity(member_env: dict) -> dict:
+    manifest = member_env.get("_plugin_record", {}).get("manifest")
+    if manifest:
+        return {
+            "kind": member_env.get("checker", {}).get("kind", ""),
+            "name": manifest["name"],
+            "version": manifest["version"],
+            "hash": manifest["_entrypoint_hash"],
+        }
+    return spec_runner._checker_info(member_env)
+
+
+def _evaluate_quorum(env: dict, envelope_path: Path, index: dict) -> spec_runner.Result:
+    declared = env.get("rung", {}).get("level", "")
+    quorum = env.get("checker", {}).get("quorum", {})
+    members = quorum.get("members", [])
+    try:
+        required = int(quorum.get("required", len(members)))
+    except (TypeError, ValueError):
+        required = len(members) + 1
+    if required <= 0 or not members:
+        return spec_runner.Result(
+            spec_runner.REFUSED,
+            "QUORUM_NOT_MET",
+            "quorum requires at least one member and a positive threshold",
+            final_rung=declared,
+            extra={"quorum": {"required": required, "met": False, "members": []}},
+        )
+
+    preflight, artifacts = spec_runner._verify_artifacts(env, envelope_path)
+    if preflight:
+        preflight.final_rung = declared
+        return preflight
+
+    member_records = []
+    counted = []
+    for i, member in enumerate(members):
+        member_env = copy.deepcopy(env)
+        member_env["id"] = f"{env.get('id', 'quorum')}#member-{i + 1}"
+        member_env["checker"] = copy.deepcopy(member)
+        if "rung" in member:
+            member_env["rung"] = {
+                "level": member["rung"],
+                "name": "quorum-member",
+                "trusted_base": [],
+            }
+        result = evaluate(member_env, envelope_path, index)
+        identity = _member_identity(member_env)
+        record = {
+            "index": i,
+            "kind": identity.get("kind", member.get("kind", "")),
+            "name": identity.get("name", ""),
+            "version": identity.get("version", ""),
+            "hash": identity.get("hash", ""),
+            "verdict": result.final_verdict,
+            "reason_code": result.reason_code,
+            "rung": result.final_rung or member_env.get("rung", {}).get("level", declared),
+        }
+        member_records.append(record)
+        if result.final_verdict != spec_runner.CERTIFIED:
+            continue
+        earned = record["rung"]
+        if earned in spec_runner.RUNG_ORDER and declared in spec_runner.RUNG_ORDER:
+            if spec_runner._stronger_than(declared, earned):
+                continue
+        counted.append(record)
+
+    distinct_counted = []
+    seen_hashes = set()
+    for record in counted:
+        checker_hash = record["hash"]
+        if checker_hash in seen_hashes:
+            continue
+        seen_hashes.add(checker_hash)
+        distinct_counted.append(record)
+
+    quorum_extra = {
+        "quorum": {
+            "required": required,
+            "met": len(distinct_counted) >= required,
+            "members": member_records,
+        }
+    }
+    if len(counted) < required:
+        return spec_runner.Result(
+            spec_runner.REFUSED,
+            "QUORUM_NOT_MET",
+            f"only {len(counted)} of {required} quorum members certified",
+            final_rung=declared,
+            artifacts=artifacts,
+            extra=quorum_extra,
+        )
+
+    if len(distinct_counted) < required:
+        return spec_runner.Result(
+            spec_runner.REFUSED,
+            "QUORUM_NOT_INDEPENDENT",
+            f"only {len(distinct_counted)} of {required} quorum members had distinct entrypoint hashes",
+            final_rung=declared,
+            artifacts=artifacts,
+            extra=quorum_extra,
+        )
+
+    return spec_runner.Result(
+        spec_runner.CERTIFIED,
+        "OK",
+        f"quorum met: {required} independent members certified at {declared}",
+        raw_verdict=spec_runner.CERTIFIED,
+        final_rung=declared,
+        artifacts=artifacts,
+        extra=quorum_extra,
+    )
 
 
 def evaluate(env: dict, envelope_path: Path, index: dict) -> spec_runner.Result:
+    if env.get("checker", {}).get("kind") == "quorum":
+        return _evaluate_quorum(env, envelope_path, index)
+
     if not _external_checker(env):
         return spec_runner.evaluate(env, envelope_path, index)
 
