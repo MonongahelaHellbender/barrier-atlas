@@ -21,7 +21,12 @@ python3 -m py_compile \
   tests/test_invariant_fuzz.py
 python3 spec/validate.py
 python3 spec/conformance/run_conformance.py --runner "python3 tools/plugin_runner.py"
-python3 tests/test_decision_table.py
+if command -v lake >/dev/null 2>&1 && [ -f "${BARRIER_ATLAS_LEAN_REPO:-../dist/lean-verification-journey}/RunnerDecisionTable.lean" ]; then
+  BARRIER_ATLAS_REQUIRE_LEAN_EXPORT=1 python3 tests/test_decision_table.py
+else
+  echo "Lean decision-table export not available; running bridge with honest skip if needed."
+  python3 tests/test_decision_table.py
+fi
 python3 tests/test_phase_e_attestation.py
 python3 tests/test_invariant_fuzz.py
 python3 tests/test_one_directional.py
