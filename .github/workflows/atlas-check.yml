@@ -48,6 +48,9 @@ jobs:
       - name: Signed verdict attestations
         run: python3 tests/test_phase_e_attestation.py
 
+      - name: Lean decision-table bridge
+        run: python3 tests/test_decision_table.py
+
       - name: Invariant fuzzer
         env:
           FUZZ_CASES: ${{ github.event_name == 'schedule' && '50000' || '2000' }}

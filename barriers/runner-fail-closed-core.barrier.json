@@ -1,0 +1,47 @@
+{
+  "id": "runner-fail-closed-core",
+  "schema_version": "0.1",
+  "claim": {
+    "statement": "In the finite Barrier Atlas decision-core model, no fact row with a missing positive checker/composite/quorum signal can decide to CERTIFIED.",
+    "kind": "impossibility",
+    "negation_of": "a fail-open decision row where checker_positive is false but the decision core returns CERTIFIED",
+    "scope": "the Lean Facts model in LeanVerificationJourney.RunnerFailClosed, bridged to the Python runner by the committed decision table test"
+  },
+  "domain": "runner/fail-closed-core",
+  "rung": {
+    "level": "R0",
+    "name": "kernel-checked decision-core theorem",
+    "trusted_base": [
+      "Lean kernel",
+      "propext",
+      "trusted fact extraction from runner state into the finite Facts model"
+    ]
+  },
+  "certificate": {
+    "kind": "lean-theorem",
+    "meta": {
+      "theorem": "RunnerFailClosed.runner_no_fail_open",
+      "module": "LeanVerificationJourney.RunnerFailClosed",
+      "axioms": [
+        "propext"
+      ],
+      "boundary": "Proves the finite decision core cannot return CERTIFIED without the modeled positive signal. It does not prove crypto, key trust, plugin honesty, or the fact-extraction layer."
+    }
+  },
+  "checker": {
+    "kind": "lean-axioms",
+    "repo_env": "LEAN_REPO",
+    "repo_default": "../dist/lean-verification-journey",
+    "lean_file": "LeanVerificationJourney/RunnerFailClosed.lean",
+    "theorem": "RunnerFailClosed.runner_no_fail_open",
+    "expected_axioms": [
+      "propext"
+    ]
+  },
+  "status": "live",
+  "provenance": {
+    "source_package": "lean-verification-journey",
+    "pipeline": "Lean 4 finite decision-core model; #print axioms audit plus atlas lean-axioms checker; Python bridge compares the exported Lean table to tools/decide.py and representative runner branches"
+  },
+  "one_directional": "The dogfood checker certifies only if the Lean theorem elaborates and its axiom set exactly equals the declared base. Any sorry, extra axiom, failed build, or theorem-name drift fails closed."
+}

@@ -16,9 +16,9 @@ happen, with each entry carrying a machine-checkable certificate at an explicit
 > [`REVIEWER_BRIEF.md`](REVIEWER_BRIEF.md) and
 > [`spec/DESIGN_CLAIMS_AND_LIMITS.md`](spec/DESIGN_CLAIMS_AND_LIMITS.md).
 
-## What's here (v0.5)
+## What's here (v0.6)
 
-Twelve real barriers, re-checkable from a single envelope format across the atlas's
+Thirteen real barriers, re-checkable from a single envelope format across the atlas's
 checker kinds, with the lower-rung ones honestly deferred:
 
 | barrier | claim | rung | checker | status |
@@ -32,13 +32,14 @@ checker kinds, with the lower-rung ones honestly deferred:
 | `combinatorics-two-bounds` | both W(3,3)≤27 **and** R(3,4)≤9 (composed) | R2 | `composed` | ✅ certified |
 | `chaos-01-test-no-separation` | 0-1 chaos test does not separate conservative vs dissipative systems | R4 | `claim-stress` | ✅ certified |
 | `empirical-and-combinatorial-bundle` | certified R4 empirical barrier composed with an R2 formal barrier | R4 | `composed` | ✅ certified |
+| `runner-fail-closed-core` | finite decision core has no fail-open `CERTIFIED` path | R0 | `lean-axioms` | ✅ certified |
 | `hybrid-unavoidable-all-N` | hybrid obstruction extended from threshold to all larger N | R5 | `multi-region` | ⏸ deferred (tail argument) |
 | `mixed-rung-bundle` | mixed bundle — demonstrates min-trust propagation | R4 | `composed` | ⏸ deferred (propagated) |
 | `private-empirical-barrier` | an unpublished empirical barrier (details withheld) | R4 | `manual` | ⏸ deferred (honest) |
 
 ```
 $ python3 tools/barrier_check.py
-  summary: 9 certified, 0 refused, 0 unverifiable-here, 3 deferred
+  summary: 10 certified, 0 refused, 0 unverifiable-here, 3 deferred
   OK: every LIVE barrier re-checked (or honestly degraded).
 ```
 
@@ -64,7 +65,9 @@ $ python3 tools/barrier_check.py
    regression-guarded in [`tests/test_one_directional.py`](tests/test_one_directional.py)
    (18 tests, incl. rung-laundering, encoder-lie refusal, claim-stress gates, and deterministic RUP
    mutation fuzzing and generated small-cert differential fuzzing against
-   `lratcheck` when the sibling binary is available).
+   `lratcheck` when the sibling binary is available). Phase F also proves the finite
+   decision-core gate in Lean and bridges it to the Python runner with an exhaustive
+   decision table; see [`spec/FORMAL_CORE.md`](spec/FORMAL_CORE.md).
 
 ## Trust boundary (stated, not hidden)
 
@@ -106,7 +109,8 @@ docs/        composition worked-example (min-rung arithmetic)
 
 ```bash
 python3 tools/barrier_check.py            # re-check every barrier
-python3 tests/test_one_directional.py     # prove the checkers fail closed
+python3 tests/test_one_directional.py     # check concrete one-directional safety cases
+python3 tests/test_decision_table.py      # compare fresh Lean export, committed table, and Python bridge
 python3 tools/encoder_check.py certs/samples_w33.cert w33
 python3 tools/encoder_check.py certs/hybrid_schur_vdw_3color_13.cert hybrid13
 python3 tools/rup_differential_fuzzer.py  # generated RUP certs vs lratcheck when available
@@ -124,9 +128,9 @@ honestly reports `UNVERIFIABLE-HERE` rather than passing. Override locations wit
 
 ## Status
 
-v0.5 — public and green: 7 checker kinds (`lratcheck`, `lean-axioms`, `rup-python`,
-`hybrid-schur-vdw-exhaustive`, `composed`, `multi-region`, `claim-stress`), 12 barriers,
-18 safety tests plus a 2000-case deterministic runner invariant fuzzer on push/PR
+v0.6 — public and green: 7 checker kinds (`lratcheck`, `lean-axioms`, `rup-python`,
+`hybrid-schur-vdw-exhaustive`, `composed`, `multi-region`, `claim-stress`), 13 barriers,
+18 safety tests plus a 458752-row Lean decision-table bridge, a 2000-case deterministic runner invariant fuzzer on push/PR
 and a scheduled 50000-case long run. Highlights: a finite hybrid barrier certified three ways (R2 CNF/RUP +
 R3 exhaustive + Lean 4); the **first CERTIFIED R4 empirical barrier** (the chaos
 0-1-test no-go), gated by a three-stage stress contract — completeness → adequacy → a
@@ -141,6 +145,7 @@ seed with 19 fixtures, including hash-pinned external checker plugins, quorum ch
 and sandbox-required refusal that still fail closed under artifact tamper, rung
 overclaim, malformed plugin timeout, non-independent quorum, and unavailable sandbox;
 and Phase E post-run attestations: Ed25519-signed verdict cores, a Merkle
-checkpoint ledger, and an in-toto Statement mapping.
+checkpoint ledger, and an in-toto Statement mapping; and Phase F's Lean-proved
+finite decision core, dogfooded as an R0 atlas barrier.
 See [`PLAN.md`](PLAN.md) §4
 for what's left: a dashboard / visual negative-space map.

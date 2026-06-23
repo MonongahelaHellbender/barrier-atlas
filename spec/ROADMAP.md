@@ -7,6 +7,7 @@ Implemented seed layers:
 - Ed25519 detached signatures over verdict-record cores;
 - a git-witnessed Merkle checkpoint ledger;
 - in-toto style pipeline attestation mapping;
+- a Lean-proved finite decision core plus a tested Python bridge;
 
 Next layers, not implemented here:
 

@@ -8,7 +8,7 @@ AI-assurance claims. It is built around one question:
 
 The project has two layers.
 
-1. The atlas itself: 12 barrier envelopes over formal, computational, empirical,
+1. The atlas itself: 13 barrier envelopes over formal, computational, empirical,
    composed, and deferred evidence.
 2. The v0.1 spec seed: a runner/envelope/conformance contract that makes refusal,
    artifact binding, trust rungs, and checker identity inspectable.
@@ -17,13 +17,16 @@ The project has two layers.
 
 ```bash
 python3 tools/barrier_check.py
-# summary: 9 certified, 0 refused, 0 unverifiable-here, 3 deferred
+# summary: 10 certified, 0 refused, 0 unverifiable-here, 3 deferred
 
 python3 tests/test_one_directional.py
 # 18 safety tests
 
 python3 tests/test_invariant_fuzz.py
 # 2000 deterministic runner-invariant fuzz cases on push/PR; 50000 on schedule
+
+python3 tests/test_decision_table.py
+# 458752 Lean-exported decision rows + representative runner branch checks
 
 python3 spec/validate.py
 # validates atlas envelopes, conformance fixtures, and checker manifests
@@ -50,6 +53,8 @@ the claim discipline:
 - quorum claims require enough independent certifying checker hashes;
 - verdict records can be signed after the run, transparency-logged in a Merkle
   ledger, and mapped into an in-toto Statement shape;
+- the finite verdict decision core has a Lean theorem and a committed exhaustive
+  decision table bridged back to the Python runner;
 - conformance fixtures include adversarial cases such as tampered artifacts,
   rung laundering, weak empirical answers, unknown checkers, and a deliberately
   lying plugin.
@@ -68,11 +73,13 @@ claim above its earned trust base.
 ## What It Does Not Claim
 
 Barrier Atlas is not a broad standard, not a production certification system, and
-not a guarantee about real-world AI-system behavior. The runner is not formally
-verified. External plugins run under a recorded `env-restricted` profile, not a
-real OS sandbox. Phase E signatures prove key possession over a verdict core, not
-institutional trust in the key. Empirical R4 entries remain empirical: they can be
-made attributable and stress-tested, but not theorem-like.
+not a guarantee about real-world AI-system behavior. Phase F proves a finite
+decision-core model and tests the bridge to representative runner branches; it
+does not prove the full Python runner implementation or fact extraction. External
+plugins run under a recorded `env-restricted` profile, not a real OS sandbox.
+Phase E signatures prove key possession over a verdict core, not institutional
+trust in the key. Empirical R4 entries remain empirical: they can be made
+attributable and stress-tested, but not theorem-like.
 
 ## Best 10-Minute Review Path
 
@@ -84,7 +91,10 @@ made attributable and stress-tested, but not theorem-like.
    unavailable required sandbox, and duplicate-plus-distinct quorum.
 4. Run `python3 tests/test_phase_e_attestation.py` to check signed-record,
    ledger-inclusion, ledger-tamper, and in-toto mapping probes.
-5. Read [`tools/plugin_runner.py`](tools/plugin_runner.py), especially the manifest
+5. Run `BARRIER_ATLAS_REQUIRE_LEAN_EXPORT=1 python3 tests/test_decision_table.py`
+   when the sibling Lean repo is available, then read
+   [`spec/FORMAL_CORE.md`](spec/FORMAL_CORE.md).
+6. Read [`tools/plugin_runner.py`](tools/plugin_runner.py), especially the manifest
    hash check, artifact staging, and returned-rung validation.
 
 ## Best 30-Minute Review Path
@@ -96,6 +106,7 @@ python3 -m py_compile tools/plugin_runner.py tools/spec_runner.py spec/validate.
 python3 spec/validate.py
 python3 spec/conformance/run_conformance.py --runner "python3 tools/plugin_runner.py"
 python3 tests/test_phase_e_attestation.py
+BARRIER_ATLAS_REQUIRE_LEAN_EXPORT=1 python3 tests/test_decision_table.py
 python3 tests/test_invariant_fuzz.py
 python3 tests/test_one_directional.py
 python3 tools/barrier_check.py

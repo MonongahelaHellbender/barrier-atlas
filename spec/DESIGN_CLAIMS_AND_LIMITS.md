@@ -104,6 +104,22 @@ Evidence:
 - `tools/atlas_log.py`
 - `tools/to_intoto.py`
 
+### 8. The finite decision core has a machine-checked fail-closed theorem
+
+Phase F models the runner's certification gate as a finite Boolean `Facts` record
+in Lean and proves that the decision core cannot return `CERTIFIED` when the
+modeled positive signal is absent. The proof is bridged to Python by a
+Lean-exported 458752-row decision table, a Python mirror checked row-for-row
+against that table, and representative real-runner fixture checks.
+
+Evidence:
+
+- `LeanVerificationJourney.RunnerFailClosed.runner_no_fail_open`
+- `spec/decision_table.json`
+- `tools/decide.py`
+- `tests/test_decision_table.py`
+- `barriers/runner-fail-closed-core.barrier.json`
+
 ## Trusted Base
 
 The trusted base is explicit, not hidden.
@@ -115,13 +131,16 @@ The trusted base is explicit, not hidden.
 | `tools/sandbox.py` | Phase D env-restricted subprocess profile and required-sandbox refusal | trusted v0.1 runner code |
 | Phase E signing key | authenticates the signed verdict core and checkpoint | key-management trust, not runner trust |
 | `tools/atlas_log.py` | Merkle ledger and checkpoint verification | trusted attestation tooling |
+| `LeanVerificationJourney.RunnerFailClosed` | finite Phase F decision-core model and fail-closed theorem | proved model, axiom base `propext` |
+| `RunnerDecisionTable.lean` + `tools/decide.py` + `spec/decision_table.json` | fresh Lean export plus Python bridge against the exported table | tested bridge, not runtime |
 | in-process checkers | interpret specific evidence kinds | trusted according to declared rung |
 | external plugins | propose evidence verdicts | trusted only by manifest identity and rung |
 | `tools/barrier_check.py` | atlas dispatcher for live barriers | trusted by checker kind and tests |
 | named human review | empirical correctness anchor for R4 | attributable, not mechanically verified |
 
-The runner is not yet formally verified. Its credibility comes from small scope,
-readability, explicit conformance fixtures, and adversarial negative tests.
+The Python runner implementation remains trusted code. Phase F proves the finite
+decision-core model and tests the bridge from that model to representative runner
+branches; it does not prove the full implementation or fact-extraction layer.
 
 ## Important Non-Claims
 
@@ -130,7 +149,7 @@ Barrier Atlas v0.1 does not claim:
 - production certification readiness;
 - broad standards authority;
 - real-world model-behavior guarantees;
-- formal verification of the runner;
+- a machine-checked proof of the full Python runner implementation;
 - a real OS sandbox for external plugins in the portable default profile;
 - proof that a hash-pinned plugin is honest;
 - proof that hash-distinct quorum members are semantically independent;
@@ -159,7 +178,9 @@ Good reviews should try to break these invariants:
 - clone the same checker entrypoint twice and try to count it as quorum;
 - replace a named human review with a non-human reviewer;
 - compose a certified strong barrier with a deferred weak one and try to keep the
-  stronger rung.
+  stronger rung;
+- perturb a row in `spec/decision_table.json` or inject a fail-open branch into
+  `tools/decide.py`.
 
 None of those should produce `CERTIFIED`.
 
@@ -167,10 +188,11 @@ None of those should produce `CERTIFIED`.
 
 The current public artifact has:
 
-- 12 atlas barriers;
-- 9 certified, 0 refused, 3 deferred in the local full-toolchain run;
+- 13 atlas barriers;
+- 10 certified, 0 refused, 3 deferred in the local full-toolchain run;
 - 18 one-directional safety tests;
 - 19 spec conformance fixtures;
+- a 458752-row Lean decision-table bridge test;
 - 2000 deterministic runner-invariant fuzz cases in push/PR CI, plus a scheduled
   50000-case long run;
 - 4 checker manifests;
@@ -186,6 +208,6 @@ The highest-value next reviews are:
 2. independent implementation of the conformance runner contract;
 3. tightening reason-code classification so fewer cases depend on checker-detail
    text;
-4. a small formal model of the rung ceiling, min-trust, and quorum calculus;
+4. independent review of the `Facts` extraction boundary used by the formal core;
 5. later, a real OS sandbox profile or Sigstore/Rekor integration, if external
    plugin execution becomes more than a local prototype.

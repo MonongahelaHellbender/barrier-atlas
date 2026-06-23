@@ -8,11 +8,17 @@ v0.1 also supports hash-pinned external checker plugins and quorum claims. Plugi
 propose verdicts; the runner still owns artifact binding, checker identity, sandbox
 profile recording, rung discipline, quorum thresholds, and the final verdict.
 
+Phase F adds a Lean-proved finite decision-core model plus a committed exhaustive
+decision table. This proves the modeled certification gate fails closed, then
+tests the bridge back to the Python runner. It does not prove crypto, plugin
+honesty, or fact extraction.
+
 ## Run
 
 ```bash
 python3 spec/validate.py
 python3 spec/conformance/run_conformance.py --runner "python3 tools/plugin_runner.py"
+python3 tests/test_decision_table.py
 python3 tests/test_invariant_fuzz.py
 ```
 
@@ -24,6 +30,7 @@ python3 tests/test_invariant_fuzz.py
 - `DESIGN_CLAIMS_AND_LIMITS.md` states what v0.1 earns, trusts, and does not claim.
 - `runner-contract.md` defines the runner CLI and verdict record.
 - `checker-plugin-contract.md` defines the external plugin contract.
+- `FORMAL_CORE.md` states the proved / bridged-by-test / still-trusted boundary.
 - `conformance/` is the executable spec seed.
 - `conformance/CONFORMANCE.md` defines implementation-independent runner conformance.
 

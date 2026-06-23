@@ -24,6 +24,7 @@ v0.1 makes the runner the small trusted base. Checkers can supply evidence verdi
 | Verdict record tamper after signing | Recomputed `record_core_sha256` or Ed25519 verification fails. | `RECORD_CORE_MISMATCH` / `SIGNATURE_INVALID` |
 | Past ledger entry tamper | Recomputed Merkle root no longer matches the signed checkpoint. | `LOG_ROOT_MISMATCH` |
 | Never-logged record claims inclusion | Missing or mismatched inclusion proof fails verification. | `LOG_INCLUSION_MISSING` |
+| Decision-core fail-open row in the finite model | Lean proves `checker_positive = false` cannot decide to `CERTIFIED`; a fresh Lean table export, the committed table, and the Python bridge test must agree. | The model refuses certification |
 
 Trusted-base additions in Phase D:
 
@@ -40,6 +41,17 @@ Trusted-base additions in Phase E:
   witnessing means committed history rewrites are visible; it is not a Rekor-style
   public transparency service.
 
+Trusted-base additions in Phase F:
+
+- `LeanVerificationJourney.RunnerFailClosed` is trusted as the finite decision-core
+  model. Lean proves the model's fail-closed theorem with axiom base `propext`.
+- `RunnerDecisionTable.lean`, `tools/decide.py`, `spec/decision_table.json`, and
+  `tests/test_decision_table.py` are trusted as the tested bridge from the Lean
+  table to representative Python runner behavior. They are not imported by the
+  runtime runners.
+- Fact extraction remains trusted: the proof assumes booleans such as
+  `artifact_hash_ok` honestly summarize the corresponding runner checks.
+
 Non-guarantees:
 
 - v0.1's portable profile is not a real OS sandbox.
@@ -51,6 +63,8 @@ Non-guarantees:
 - v0.1 does not make broad AI-system safety claims.
 - v0.1 does not provide key custody, revocation, timestamp authority, or Sigstore
   identity binding.
+- Phase F does not prove the full Python runner implementation or the
+  fact-extraction layer.
 
 Phase C added no runtime trusted base. Phase D's composite-aware fuzzer now samples
 composed, multi-region, and quorum cases, shrinking the coverage residual. It is
