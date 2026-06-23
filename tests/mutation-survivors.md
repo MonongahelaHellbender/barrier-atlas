@@ -33,3 +33,4 @@ No safety-relevant survivor is accepted without a written justification here.
 | date | tool | target | survivor | disposition |
 |---|---|---|---|---|
 | 2026-06-23 | deterministic invariant fuzzer | runner structural + composite gates | none observed in 2000-case Phase D run | blocking CI guard |
+| 2026-06-23 | targeted fault injection | composed min-trust fuzzer coverage | Phase D atom pool used plugin-only `external-rup` atoms, so composed sub-barriers bailed as `UNKNOWN_CHECKER` before reaching min-trust | fixed by switching composed fuzz atoms to in-process `rup-python`; composed, multi-region, and quorum injected faults now all CAUGHT |

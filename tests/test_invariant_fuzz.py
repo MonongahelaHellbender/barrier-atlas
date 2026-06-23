@@ -273,6 +273,20 @@ def _external_case(
     return env, meta
 
 
+def _rup_python_atom(case_id: str, rung: str = "R3") -> dict:
+    env = _base_env(
+        case_id,
+        {"kind": "rup-python", "cert": "certs/samples_w33.cert"},
+        rung,
+    )
+    env["certificate"] = {
+        "kind": "lrat-flat",
+        "path": "certs/samples_w33.cert",
+        "sha256": GOOD_SHA,
+    }
+    return env
+
+
 def _atom_pool(root: Path, manifests: dict[str, dict[str, str]]) -> dict[str, dict]:
     atoms: dict[str, dict] = {}
 
@@ -287,19 +301,11 @@ def _atom_pool(root: Path, manifests: dict[str, dict[str, str]]) -> dict[str, di
             "hash": checker_hash,
         }
 
-    good_a = _base_env(
-        "fuzz-atom-good-a",
-        {"kind": "external-rup", "manifest": manifests["rup"]["path"], "cert_artifact": "certificate"},
-        "R3",
-    )
-    write("good-a", good_a, True, "R3", manifests["rup"]["hash"])
+    good_a = _rup_python_atom("fuzz-atom-good-a")
+    write("good-a", good_a, True, "R3")
 
-    good_b = _base_env(
-        "fuzz-atom-good-b",
-        {"kind": "external-rup", "manifest": manifests["rup_alt"]["path"], "cert_artifact": "certificate"},
-        "R3",
-    )
-    write("good-b", good_b, True, "R3", manifests["rup_alt"]["hash"])
+    good_b = _rup_python_atom("fuzz-atom-good-b")
+    write("good-b", good_b, True, "R3")
 
     bad_hash = copy.deepcopy(good_a)
     bad_hash["id"] = "fuzz-atom-bad-hash"
@@ -308,20 +314,15 @@ def _atom_pool(root: Path, manifests: dict[str, dict[str, str]]) -> dict[str, di
 
     deferred = _base_env(
         "fuzz-atom-deferred",
-        {
-            "kind": "external-rup",
-            "manifest": manifests["dynamic"]["path"],
-            "cert_artifact": "certificate",
-            "fuzz_output": {"mode": "json", "verdict": "DEFERRED", "rung": "R3"},
-        },
-        "R3",
+        {"kind": "manual", "promote_recipe": "fuzz deferred atom"},
+        "R4",
     )
-    write("deferred", deferred, False, "R3", manifests["dynamic"]["hash"])
+    deferred["certificate"] = {"kind": "manual"}
+    deferred.pop("artifacts", None)
+    write("deferred", deferred, False, "R4")
 
-    over_ceiling = copy.deepcopy(good_a)
-    over_ceiling["id"] = "fuzz-atom-over-ceiling"
-    over_ceiling["rung"]["level"] = "R2"
-    write("over-ceiling", over_ceiling, False, "R2", manifests["rup"]["hash"])
+    over_ceiling = _rup_python_atom("fuzz-atom-over-ceiling", "R2")
+    write("over-ceiling", over_ceiling, False, "R2")
     return atoms
 
 
