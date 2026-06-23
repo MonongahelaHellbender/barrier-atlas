@@ -89,6 +89,21 @@ Evidence:
 - `17-quorum-not-independent.barrier.json`
 - `19-quorum-duplicate-plus-distinct.barrier.json`
 
+### 7. Verdict records can be authenticated and witnessed after the run
+
+Phase E signs the canonical `record_core` bytes with Ed25519, logs signed records
+in a Merkle tree, signs the checkpoint, and maps verdict records into an in-toto
+Statement shape. This makes a verdict auditable as a stable object without moving
+signing into the runner's trusted path.
+
+Evidence:
+
+- `tests/test_phase_e_attestation.py`
+- `tools/sign_record.py`
+- `tools/verify_record.py`
+- `tools/atlas_log.py`
+- `tools/to_intoto.py`
+
 ## Trusted Base
 
 The trusted base is explicit, not hidden.
@@ -98,6 +113,8 @@ The trusted base is explicit, not hidden.
 | `tools/spec_runner.py` | Phase A runner: artifacts, rung ceilings, composition, verdict records | trusted v0.1 runner code |
 | `tools/plugin_runner.py` | Phase B/D external plugin dispatch, identity checks, quorum discipline | trusted v0.1 runner code |
 | `tools/sandbox.py` | Phase D env-restricted subprocess profile and required-sandbox refusal | trusted v0.1 runner code |
+| Phase E signing key | authenticates the signed verdict core and checkpoint | key-management trust, not runner trust |
+| `tools/atlas_log.py` | Merkle ledger and checkpoint verification | trusted attestation tooling |
 | in-process checkers | interpret specific evidence kinds | trusted according to declared rung |
 | external plugins | propose evidence verdicts | trusted only by manifest identity and rung |
 | `tools/barrier_check.py` | atlas dispatcher for live barriers | trusted by checker kind and tests |
@@ -117,6 +134,8 @@ Barrier Atlas v0.1 does not claim:
 - a real OS sandbox for external plugins in the portable default profile;
 - proof that a hash-pinned plugin is honest;
 - proof that hash-distinct quorum members are semantically independent;
+- Sigstore/Rekor-backed public transparency;
+- institutional trust in any local signing key;
 - theorem-like truth for empirical R4 claims;
 - literature priority for the finite hybrid Schur/vdW result.
 
@@ -155,7 +174,8 @@ The current public artifact has:
 - 2000 deterministic runner-invariant fuzz cases in push/PR CI, plus a scheduled
   50000-case long run;
 - 4 checker manifests;
-- CI coverage for atlas checks and spec conformance.
+- CI coverage for atlas checks, spec conformance, invariant fuzzing, and Phase E
+  signed-attestation probes.
 
 ## Next Review Priorities
 
@@ -167,5 +187,5 @@ The highest-value next reviews are:
 3. tightening reason-code classification so fewer cases depend on checker-detail
    text;
 4. a small formal model of the rung ceiling, min-trust, and quorum calculus;
-5. later, a real OS sandbox profile or signing, if external plugin execution becomes
-   more than a local prototype.
+5. later, a real OS sandbox profile or Sigstore/Rekor integration, if external
+   plugin execution becomes more than a local prototype.

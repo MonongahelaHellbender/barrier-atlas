@@ -10,6 +10,9 @@
     "tools/sandbox.py": "stdlib-only",
     "tests/test_invariant_fuzz.py": "stdlib-only"
   },
+  "post_run_attestation_dependencies": {
+    "requirements-signing.txt": "cryptography for Ed25519 signing, checkpoint verification, and Phase E tests; runners remain stdlib-only"
+  },
   "optional_tools": [
     {
       "id": "lratcheck",

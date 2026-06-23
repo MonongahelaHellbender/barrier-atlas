@@ -48,6 +48,8 @@ the claim discipline:
 - plugins run with an explicitly recorded sandbox profile (`env-restricted` by
   default; required real sandbox profiles fail closed when unavailable);
 - quorum claims require enough independent certifying checker hashes;
+- verdict records can be signed after the run, transparency-logged in a Merkle
+  ledger, and mapped into an in-toto Statement shape;
 - conformance fixtures include adversarial cases such as tampered artifacts,
   rung laundering, weak empirical answers, unknown checkers, and a deliberately
   lying plugin.
@@ -68,8 +70,9 @@ claim above its earned trust base.
 Barrier Atlas is not a broad standard, not a production certification system, and
 not a guarantee about real-world AI-system behavior. The runner is not formally
 verified. External plugins run under a recorded `env-restricted` profile, not a
-real OS sandbox. Empirical R4 entries remain empirical: they can be made
-attributable and stress-tested, but not theorem-like.
+real OS sandbox. Phase E signatures prove key possession over a verdict core, not
+institutional trust in the key. Empirical R4 entries remain empirical: they can be
+made attributable and stress-tested, but not theorem-like.
 
 ## Best 10-Minute Review Path
 
@@ -79,7 +82,9 @@ attributable and stress-tested, but not theorem-like.
    external RUP plugin, checker hash mismatch, liar over tampered artifact, and liar
    illegal rung, malformed plugin timeout, quorum met/not-met/not-independent,
    unavailable required sandbox, and duplicate-plus-distinct quorum.
-4. Read [`tools/plugin_runner.py`](tools/plugin_runner.py), especially the manifest
+4. Run `python3 tests/test_phase_e_attestation.py` to check signed-record,
+   ledger-inclusion, ledger-tamper, and in-toto mapping probes.
+5. Read [`tools/plugin_runner.py`](tools/plugin_runner.py), especially the manifest
    hash check, artifact staging, and returned-rung validation.
 
 ## Best 30-Minute Review Path
@@ -90,6 +95,7 @@ Run the full checks:
 python3 -m py_compile tools/plugin_runner.py tools/spec_runner.py spec/validate.py spec/conformance/run_conformance.py
 python3 spec/validate.py
 python3 spec/conformance/run_conformance.py --runner "python3 tools/plugin_runner.py"
+python3 tests/test_phase_e_attestation.py
 python3 tests/test_invariant_fuzz.py
 python3 tests/test_one_directional.py
 python3 tools/barrier_check.py

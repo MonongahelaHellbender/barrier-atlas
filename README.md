@@ -139,6 +139,8 @@ artifact measuring llm-vs-human false-accept rate, justifying why correctness st
 ([`docs/review-calibration.md`](docs/review-calibration.md)); plus a v0.1 spec/conformance
 seed with 19 fixtures, including hash-pinned external checker plugins, quorum checks,
 and sandbox-required refusal that still fail closed under artifact tamper, rung
-overclaim, malformed plugin timeout, non-independent quorum, and unavailable sandbox.
+overclaim, malformed plugin timeout, non-independent quorum, and unavailable sandbox;
+and Phase E post-run attestations: Ed25519-signed verdict cores, a Merkle
+checkpoint ledger, and an in-toto Statement mapping.
 See [`PLAN.md`](PLAN.md) §4
 for what's left: a dashboard / visual negative-space map.

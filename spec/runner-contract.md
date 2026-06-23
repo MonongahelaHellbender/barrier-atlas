@@ -30,6 +30,21 @@ The runner ignores `expected_verdict` and `expected_reason_code`; those fields b
 
 `record_core_sha256` is computed from structured fields only: schema version, envelope id/hash, sorted artifact ids/hashes/verified bits, checker identity, raw checker verdict, final verdict, final rung, and reason code. It excludes `detail` and any timestamp so the core hash is reproducible across machines.
 
+## Post-Run Attestation
+
+The runner does not sign records itself. Phase E tools can sign the canonical
+`record_core` after the run:
+
+```bash
+python3 tools/sign_record.py --record record.json --private-key signing-private.pem --out record.sig.json
+python3 tools/verify_record.py --record record.json --signature record.sig.json --public-key signing-public.pem
+```
+
+`tools/atlas_log.py` can append a signed record to a Merkle ledger and write a
+signed checkpoint. `tools/to_intoto.py` converts a verdict record into an in-toto
+Statement shape. These are authenticity and witness layers over the record; they
+do not alter the runner verdict.
+
 ## External Plugin Dispatch
 
 For envelopes that declare `checker.manifest`, the plugin-capable runner uses this

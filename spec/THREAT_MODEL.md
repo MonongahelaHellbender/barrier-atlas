@@ -21,6 +21,9 @@ v0.1 makes the runner the small trusted base. Checkers can supply evidence verdi
 | Toolchain absent | No certification is minted. | `UNVERIFIABLE-HERE` |
 | Non-human review says an empirical answer is adequate | Non-human review can screen only, never certify correctness. | `DEFERRED` |
 | Named human verdict | Attributable and auditable, not mechanically verified. | Human trust base is explicit |
+| Verdict record tamper after signing | Recomputed `record_core_sha256` or Ed25519 verification fails. | `RECORD_CORE_MISMATCH` / `SIGNATURE_INVALID` |
+| Past ledger entry tamper | Recomputed Merkle root no longer matches the signed checkpoint. | `LOG_ROOT_MISMATCH` |
+| Never-logged record claims inclusion | Missing or mismatched inclusion proof fails verification. | `LOG_INCLUSION_MISSING` |
 
 Trusted-base additions in Phase D:
 
@@ -28,6 +31,14 @@ Trusted-base additions in Phase D:
   `env-restricted` profile scrubs environment and cwd but is not a real OS sandbox.
 - Quorum independence is asserted by distinct entrypoint hashes and member metadata;
   it is not proof of semantic independence.
+
+Trusted-base additions in Phase E:
+
+- The Ed25519 private key is trusted to represent the signer. The code can verify
+  key possession, not whether the key was governed well.
+- `tools/atlas_log.py` is trusted to compute the Merkle tree and checkpoint. GitHub
+  witnessing means committed history rewrites are visible; it is not a Rekor-style
+  public transparency service.
 
 Non-guarantees:
 
@@ -38,6 +49,8 @@ Non-guarantees:
 - v0.1 does not verify human expertise.
 - v0.1 does not fetch or authenticate remote artifacts.
 - v0.1 does not make broad AI-system safety claims.
+- v0.1 does not provide key custody, revocation, timestamp authority, or Sigstore
+  identity binding.
 
 Phase C added no runtime trusted base. Phase D's composite-aware fuzzer now samples
 composed, multi-region, and quorum cases, shrinking the coverage residual. It is

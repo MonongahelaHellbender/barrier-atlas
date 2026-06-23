@@ -1,5 +1,6 @@
 __pycache__/
 *.pyc
+.venv/
 barriers/_tmp_*.barrier.json
 barriers/_test_*.barrier.json
 certs/_tmp_*.cert

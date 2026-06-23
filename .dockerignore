@@ -1,6 +1,7 @@
 .git
 __pycache__/
 *.pyc
+.venv/
 .fuzz_plugins_*/
 .mutmut-cache/
 mutants/

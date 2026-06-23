@@ -16,6 +16,9 @@ jobs:
         with:
           python-version: "3.12"
 
+      - name: Install signing dependencies
+        run: python3 -m pip install -r requirements-signing.txt
+
       # The one-directional safety property is the load-bearing claim: checkers
       # must fail CLOSED. The tamper test is environment-independent (sha256 binding,
       # no toolchain needed); the axiom-lie test self-skips honestly when Lean is
@@ -41,6 +44,9 @@ jobs:
         run: |
           python3 spec/validate.py
           python3 spec/conformance/run_conformance.py --runner "python3 tools/plugin_runner.py"
+
+      - name: Signed verdict attestations
+        run: python3 tests/test_phase_e_attestation.py
 
       - name: Invariant fuzzer
         env:
