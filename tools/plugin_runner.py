@@ -173,7 +173,6 @@ def _stage_artifacts(env: dict, envelope_path: Path, temp_dir: Path) -> spec_run
 def _run_plugin(env: dict, envelope_path: Path, manifest: dict) -> spec_runner.Result:
     declared = env.get("rung", {}).get("level", "")
     kind = env.get("checker", {}).get("kind", "")
-    timeout = int(env.get("checker", {}).get("timeout_seconds", 60))
 
     ceiling = spec_runner.ATOMIC_CEILINGS.get(kind)
     if ceiling and declared and spec_runner._stronger_than(declared, ceiling):
@@ -181,6 +180,27 @@ def _run_plugin(env: dict, envelope_path: Path, manifest: dict) -> spec_runner.R
             spec_runner.REFUSED,
             "RUNG_CEILING_EXCEEDED",
             f"declared {declared} is stronger than {kind} ceiling {ceiling}",
+            final_rung=declared,
+        )
+
+    # A malformed envelope-supplied timeout must emit one fail-closed record,
+    # not crash the runner or silently normalize bad checker configuration.
+    try:
+        timeout = int(env.get("checker", {}).get("timeout_seconds", 60))
+    except (TypeError, ValueError):
+        return spec_runner.Result(
+            spec_runner.UNVERIFIABLE,
+            "CHECKER_ERROR",
+            "checker timeout_seconds is not an integer",
+            raw_verdict=spec_runner.UNVERIFIABLE,
+            final_rung=declared,
+        )
+    if timeout <= 0:
+        return spec_runner.Result(
+            spec_runner.UNVERIFIABLE,
+            "CHECKER_ERROR",
+            "checker timeout_seconds must be positive",
+            raw_verdict=spec_runner.UNVERIFIABLE,
             final_rung=declared,
         )
 

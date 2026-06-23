@@ -128,7 +128,7 @@ The current public artifact has:
 - 12 atlas barriers;
 - 9 certified, 0 refused, 3 deferred in the local full-toolchain run;
 - 18 one-directional safety tests;
-- 13 spec conformance fixtures;
+- 14 spec conformance fixtures;
 - 3 checker manifests;
 - CI coverage for atlas checks and spec conformance.
 

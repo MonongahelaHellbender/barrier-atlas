@@ -135,6 +135,6 @@ rungs** — one claim partitioned into regions, each at its own rung, earning th
 ([`docs/composition-example.md`](docs/composition-example.md)); and a **review-calibration**
 artifact measuring llm-vs-human false-accept rate, justifying why correctness stays human
 ([`docs/review-calibration.md`](docs/review-calibration.md)); plus a v0.1 spec/conformance
-seed with 13 fixtures, including hash-pinned external checker plugins that still fail
-closed under artifact tamper and rung overclaim. See [`PLAN.md`](PLAN.md) §4
+seed with 14 fixtures, including hash-pinned external checker plugins that still fail
+closed under artifact tamper, rung overclaim, and a malformed plugin timeout. See [`PLAN.md`](PLAN.md) §4
 for what's left: a dashboard / visual negative-space map.

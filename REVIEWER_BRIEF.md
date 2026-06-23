@@ -26,7 +26,7 @@ python3 spec/validate.py
 # validates atlas envelopes, conformance fixtures, and checker manifests
 
 python3 spec/conformance/run_conformance.py --runner "python3 tools/plugin_runner.py"
-# 13 conformance fixtures
+# 14 conformance fixtures
 ```
 
 CI runs those load-bearing checks on every push.
@@ -66,9 +66,9 @@ they can be made attributable and stress-tested, but not theorem-like.
 
 1. Read [`spec/DESIGN_CLAIMS_AND_LIMITS.md`](spec/DESIGN_CLAIMS_AND_LIMITS.md).
 2. Run `python3 spec/conformance/run_conformance.py --runner "python3 tools/plugin_runner.py"`.
-3. Inspect fixtures 10-13 in [`spec/conformance/fixtures`](spec/conformance/fixtures):
+3. Inspect fixtures 10-14 in [`spec/conformance/fixtures`](spec/conformance/fixtures):
    external RUP plugin, checker hash mismatch, liar over tampered artifact, and liar
-   illegal rung.
+   illegal rung, plus malformed plugin timeout.
 4. Read [`tools/plugin_runner.py`](tools/plugin_runner.py), especially the manifest
    hash check, artifact staging, and returned-rung validation.
 
