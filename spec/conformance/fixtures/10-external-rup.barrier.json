@@ -1,0 +1,39 @@
+{
+  "id": "conf-external-rup",
+  "schema_version": "0.1",
+  "claim": {
+    "statement": "An external hash-pinned RUP plugin can certify the bundled W(3,3) certificate.",
+    "kind": "impossibility",
+    "negation_of": "a 3-coloring of {1,...,27} with no monochromatic 3-term arithmetic progression",
+    "scope": "all 3-colorings of [1..27]"
+  },
+  "domain": "conformance/plugin",
+  "rung": {
+    "level": "R3",
+    "name": "external-independent-recomputation",
+    "trusted_base": ["hash-pinned external RUP plugin", "runner artifact binding"]
+  },
+  "certificate": { "kind": "plugin-rup" },
+  "artifacts": [
+    {
+      "id": "certificate",
+      "type": "lrat-flat",
+      "role": "certificate",
+      "path": "certs/samples_w33.cert",
+      "sha256": "f280ae0847138a9e4332446de277ef9e870d27571d33b80d0b3a0f68a7aa4b7a"
+    }
+  ],
+  "checker": {
+    "kind": "external-rup",
+    "manifest": "spec/checkers/rup.manifest.json",
+    "cert_artifact": "certificate"
+  },
+  "status": "live",
+  "provenance": {
+    "source_package": "barrier-atlas conformance",
+    "pipeline": "verified artifact staged into a temp dir, then checked by a hash-pinned external plugin"
+  },
+  "one_directional": "The plugin only proposes a verdict; runner-owned gates decide the final verdict record.",
+  "expected_verdict": "CERTIFIED",
+  "expected_reason_code": "OK"
+}

@@ -1,0 +1,39 @@
+{
+  "id": "conf-checker-hash-mismatch",
+  "schema_version": "0.1",
+  "claim": {
+    "statement": "A checker manifest with the wrong entrypoint hash cannot certify a bounded claim.",
+    "kind": "impossibility",
+    "negation_of": "certification by an unverified external checker identity",
+    "scope": "one external plugin manifest"
+  },
+  "domain": "conformance/plugin",
+  "rung": {
+    "level": "R3",
+    "name": "external-independent-recomputation",
+    "trusted_base": ["runner-computed checker identity"]
+  },
+  "certificate": { "kind": "plugin-rup" },
+  "artifacts": [
+    {
+      "id": "certificate",
+      "type": "lrat-flat",
+      "role": "certificate",
+      "path": "certs/samples_w33.cert",
+      "sha256": "f280ae0847138a9e4332446de277ef9e870d27571d33b80d0b3a0f68a7aa4b7a"
+    }
+  ],
+  "checker": {
+    "kind": "external-rup",
+    "manifest": "spec/checkers/rup-bad-hash.manifest.json",
+    "cert_artifact": "certificate"
+  },
+  "status": "live",
+  "provenance": {
+    "source_package": "barrier-atlas conformance",
+    "pipeline": "manifest intentionally pins the wrong entrypoint hash"
+  },
+  "one_directional": "The runner computes the entrypoint hash itself and refuses mismatch before running the plugin.",
+  "expected_verdict": "REFUSED",
+  "expected_reason_code": "CHECKER_HASH_MISMATCH"
+}

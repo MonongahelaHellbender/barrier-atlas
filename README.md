@@ -110,7 +110,7 @@ python3 tools/rup_differential_fuzzer.py  # generated RUP certs vs lratcheck whe
 python3 tools/hybrid_schur_vdw_check.py   # R3 finite hybrid barrier
 python3 tools/hybrid_schur_vdw_cert.py    # R2 hybrid CNF/RUP cert generator
 python3 spec/validate.py                  # validate atlas envelopes + spec fixtures
-python3 spec/conformance/run_conformance.py --runner "python3 tools/spec_runner.py"
+python3 spec/conformance/run_conformance.py --runner "python3 tools/plugin_runner.py"
 ```
 
 Needs Python 3 (stdlib only). The `lratcheck` entries also need the sibling
@@ -131,5 +131,7 @@ through the **min-trust composition** calculus as a first-class input; **multi-r
 rungs** — one claim partitioned into regions, each at its own rung, earning the weakest
 ([`docs/composition-example.md`](docs/composition-example.md)); and a **review-calibration**
 artifact measuring llm-vs-human false-accept rate, justifying why correctness stays human
-([`docs/review-calibration.md`](docs/review-calibration.md)). See [`PLAN.md`](PLAN.md) §4
+([`docs/review-calibration.md`](docs/review-calibration.md)); and a v0.1 spec/conformance
+seed with 13 fixtures, including hash-pinned external checker plugins that still fail
+closed under artifact tamper and rung overclaim. See [`PLAN.md`](PLAN.md) §4
 for what's left: a dashboard / visual negative-space map.

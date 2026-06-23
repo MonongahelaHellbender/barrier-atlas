@@ -1,0 +1,39 @@
+{
+  "id": "conf-liar-tampered-artifact",
+  "schema_version": "0.1",
+  "claim": {
+    "statement": "A lying plugin cannot certify when the declared artifact hash mismatches.",
+    "kind": "impossibility",
+    "negation_of": "certification of a tampered artifact by a malicious checker",
+    "scope": "one hash-bound certificate"
+  },
+  "domain": "conformance/plugin",
+  "rung": {
+    "level": "R3",
+    "name": "external-independent-recomputation",
+    "trusted_base": ["runner artifact binding", "hash-pinned malicious fixture"]
+  },
+  "certificate": { "kind": "plugin-rup" },
+  "artifacts": [
+    {
+      "id": "certificate",
+      "type": "lrat-flat",
+      "role": "certificate",
+      "path": "certs/samples_w33.cert",
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+    }
+  ],
+  "checker": {
+    "kind": "external-rup",
+    "manifest": "spec/checkers/liar.manifest.json",
+    "cert_artifact": "certificate"
+  },
+  "status": "live",
+  "provenance": {
+    "source_package": "barrier-atlas conformance",
+    "pipeline": "liar plugin would certify, but runner refuses the artifact before dispatch"
+  },
+  "one_directional": "Artifact mismatch is runner-owned and happens before the plugin can propose a verdict.",
+  "expected_verdict": "REFUSED",
+  "expected_reason_code": "ARTIFACT_HASH_MISMATCH"
+}

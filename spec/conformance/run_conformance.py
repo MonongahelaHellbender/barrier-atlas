@@ -39,7 +39,7 @@ def _fixture_paths() -> list[Path]:
 
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--runner", default="python3 tools/spec_runner.py")
+    ap.add_argument("--runner", default="python3 tools/plugin_runner.py")
     args = ap.parse_args()
 
     failures = []

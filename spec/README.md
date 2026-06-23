@@ -4,11 +4,15 @@ A refusal-first certification envelope for bounded scientific and AI-assurance c
 
 The spec separates claims, artifacts, checker behavior, trust rungs, and final verdicts. The runner is the small trusted base: it binds artifacts by hash, rejects path escapes, enforces rung ceilings and min-trust composition, and emits a reproducible verdict record.
 
+v0.1 also supports hash-pinned external checker plugins. Plugins propose verdicts;
+the runner still owns artifact binding, checker identity, rung discipline, and the
+final verdict.
+
 ## Run
 
 ```bash
 python3 spec/validate.py
-python3 spec/conformance/run_conformance.py --runner "python3 tools/spec_runner.py"
+python3 spec/conformance/run_conformance.py --runner "python3 tools/plugin_runner.py"
 ```
 
 ## Pieces
@@ -17,6 +21,7 @@ python3 spec/conformance/run_conformance.py --runner "python3 tools/spec_runner.
 - `verdict-semantics.md` defines verdicts and reason codes.
 - `THREAT_MODEL.md` names what the runner does and does not defend.
 - `runner-contract.md` defines the runner CLI and verdict record.
+- `checker-plugin-contract.md` defines the external plugin contract.
 - `conformance/` is the executable spec seed.
 
 ## AI-Assurance Interpretation
@@ -32,4 +37,4 @@ python3 spec/conformance/run_conformance.py --runner "python3 tools/spec_runner.
 
 ## What This Is Not
 
-v0.1 is not a broad standard, not a guarantee about AI-system safety, not a security-product credential, and not a production certification system. It is a small runner/envelope/conformance seed that makes bounded claims more inspectable and easier to refuse honestly.
+v0.1 is not a broad standard, not a guarantee about AI-system safety, not a security-product credential, and not a production certification system. It is not a plugin sandbox: running an external plugin executes code on the host. It is a small runner/envelope/conformance seed that makes bounded claims more inspectable and easier to refuse honestly.

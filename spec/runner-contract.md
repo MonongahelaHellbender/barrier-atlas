@@ -6,7 +6,13 @@ The v0.1 runner consumes one barrier envelope and emits one JSON verdict record.
 <runner-command> --envelope path/to/barrier.json
 ```
 
-The reference implementation is:
+The plugin-capable reference implementation is:
+
+```bash
+python3 tools/plugin_runner.py --envelope path/to/barrier.json
+```
+
+The Phase A in-process reference runner remains available as:
 
 ```bash
 python3 tools/spec_runner.py --envelope path/to/barrier.json
@@ -23,3 +29,20 @@ The runner owns:
 The runner ignores `expected_verdict` and `expected_reason_code`; those fields belong only to conformance fixtures.
 
 `record_core_sha256` is computed from structured fields only: schema version, envelope id/hash, sorted artifact ids/hashes/verified bits, checker identity, raw checker verdict, final verdict, final rung, and reason code. It excludes `detail` and any timestamp so the core hash is reproducible across machines.
+
+## External Plugin Dispatch
+
+For envelopes that declare `checker.manifest`, the plugin-capable runner uses this
+order:
+
+1. Resolve and validate the manifest.
+2. Compute the entrypoint hash and compare it with the manifest.
+3. Verify artifact paths and hashes.
+4. Enforce the declared rung against the checker-kind ceiling.
+5. Stage only verified artifacts into a temporary artifact directory.
+6. Run the plugin with a timeout.
+7. Validate the plugin JSON verdict and returned rung.
+8. Emit the final runner-owned verdict record.
+
+The plugin may never upgrade a verdict. A `CERTIFIED` final verdict requires all
+runner gates to pass and the plugin to return `CERTIFIED`.

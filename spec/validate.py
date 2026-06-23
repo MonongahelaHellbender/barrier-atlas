@@ -18,6 +18,9 @@ VALID_REASON_CODES = {
     "LLM_NOT_A_GATE",
     "UNKNOWN_CHECKER",
     "CHECKER_ERROR",
+    "MANIFEST_INVALID",
+    "CHECKER_HASH_MISMATCH",
+    "CHECKER_TIMEOUT",
     "DEFERRED_PENDING_HUMAN",
     "WEAK_SUBBARRIER",
 }
@@ -79,17 +82,41 @@ def validate_env(path: Path) -> list[str]:
     return errors
 
 
+def validate_manifest(path: Path) -> list[str]:
+    errors = []
+    try:
+        manifest = json.loads(path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as e:
+        return [_err(path, f"invalid JSON: {e}")]
+    for key in ("name", "version", "kind", "command", "entrypoint", "sha256"):
+        if key not in manifest:
+            errors.append(_err(path, f"manifest missing required field {key!r}"))
+    if errors:
+        return errors
+    if not isinstance(manifest["command"], list) or not all(isinstance(x, str) for x in manifest["command"]):
+        errors.append(_err(path, "manifest.command must be a string array"))
+    entry = manifest["entrypoint"]
+    p = Path(entry)
+    if p.is_absolute() or ".." in p.parts or "://" in entry or entry.startswith("~") or entry[1:3] in (":\\", ":/"):
+        errors.append(_err(path, "manifest.entrypoint must be local, relative, and contain no '..'"))
+    return errors
+
+
 def main() -> int:
     paths = sorted((ROOT / "barriers").glob("*.barrier.json"))
     paths += sorted((ROOT / "spec" / "conformance" / "fixtures").rglob("*.barrier.json"))
     errors = []
     for path in paths:
         errors.extend(validate_env(path))
+    manifests = sorted((ROOT / "spec" / "checkers").glob("*.manifest.json"))
+    for path in manifests:
+        errors.extend(validate_manifest(path))
     if errors:
         for error in errors:
             print(error, file=sys.stderr)
         return 1
-    print(f"validated {len(paths)} barrier envelopes against spec v0.1")
+    suffix = f" and {len(manifests)} checker manifests" if manifests else ""
+    print(f"validated {len(paths)} barrier envelopes{suffix} against spec v0.1")
     return 0
 
 

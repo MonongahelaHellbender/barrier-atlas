@@ -9,7 +9,7 @@ Next layers, not implemented here:
 - role-based human sign-off;
 - append-only verdict logs;
 - remote artifact resolution;
-- external checker plugins;
+- sandboxed or signed plugin execution;
 - translations to other high-assurance domains.
 
 The translation target remains bounded assurance claims: explicit artifacts, explicit trust base, and fail-closed gates.

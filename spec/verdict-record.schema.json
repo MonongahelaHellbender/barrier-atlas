@@ -62,6 +62,9 @@
         "LLM_NOT_A_GATE",
         "UNKNOWN_CHECKER",
         "CHECKER_ERROR",
+        "MANIFEST_INVALID",
+        "CHECKER_HASH_MISMATCH",
+        "CHECKER_TIMEOUT",
         "DEFERRED_PENDING_HUMAN",
         "WEAK_SUBBARRIER"
       ]

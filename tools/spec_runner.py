@@ -28,6 +28,7 @@ ATOMIC_CEILINGS = {
     "lean-axioms": "R0",
     "lratcheck": "R2",
     "rup-python": "R3",
+    "external-rup": "R3",
     "hybrid-schur-vdw-exhaustive": "R3",
     "claim-stress": "R4",
 }
@@ -43,6 +44,9 @@ REASON_CODES = {
     "LLM_NOT_A_GATE",
     "UNKNOWN_CHECKER",
     "CHECKER_ERROR",
+    "MANIFEST_INVALID",
+    "CHECKER_HASH_MISMATCH",
+    "CHECKER_TIMEOUT",
     "DEFERRED_PENDING_HUMAN",
     "WEAK_SUBBARRIER",
 }

@@ -1,0 +1,8 @@
+{
+  "name": "barrier-atlas-liar",
+  "version": "0.1",
+  "kind": "external-rup",
+  "command": ["python3", "tools/checkers/liar_plugin.py"],
+  "entrypoint": "tools/checkers/liar_plugin.py",
+  "sha256": "f9764981a8beb700c717873a411fce224fc8686ded2babd11f2803f22199b4e8"
+}

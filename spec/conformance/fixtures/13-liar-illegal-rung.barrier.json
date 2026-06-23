@@ -1,0 +1,39 @@
+{
+  "id": "conf-liar-illegal-rung",
+  "schema_version": "0.1",
+  "claim": {
+    "statement": "A lying external checker cannot claim a stronger rung than its manifest kind can earn.",
+    "kind": "impossibility",
+    "negation_of": "certification by an external checker that reports an illegal stronger rung",
+    "scope": "one external-rup plugin returning R0"
+  },
+  "domain": "conformance/plugin",
+  "rung": {
+    "level": "R3",
+    "name": "external-independent-recomputation",
+    "trusted_base": ["runner rung ceiling", "hash-pinned malicious fixture"]
+  },
+  "certificate": { "kind": "plugin-rup" },
+  "artifacts": [
+    {
+      "id": "certificate",
+      "type": "lrat-flat",
+      "role": "certificate",
+      "path": "certs/samples_w33.cert",
+      "sha256": "f280ae0847138a9e4332446de277ef9e870d27571d33b80d0b3a0f68a7aa4b7a"
+    }
+  ],
+  "checker": {
+    "kind": "external-rup",
+    "manifest": "spec/checkers/liar.manifest.json",
+    "cert_artifact": "certificate"
+  },
+  "status": "live",
+  "provenance": {
+    "source_package": "barrier-atlas conformance",
+    "pipeline": "liar plugin returns CERTIFIED/R0; runner refuses the illegal rung"
+  },
+  "one_directional": "The runner rejects a plugin-returned rung stronger than the external-rup ceiling.",
+  "expected_verdict": "REFUSED",
+  "expected_reason_code": "RUNG_CEILING_EXCEEDED"
+}
