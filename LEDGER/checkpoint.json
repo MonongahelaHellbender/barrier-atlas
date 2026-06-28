@@ -1,0 +1,9 @@
+{
+  "alg": "ed25519",
+  "checkpoint_version": "0.1",
+  "key_id": "ed25519:87ea2ff5fd15b48c51897d8a611433f46069f3fa9e207cdefad2c461b68461d7",
+  "root_hash": "2ab4a0c59945b404402a8416b9f23296e8607ec51e1b131c6b0e65b1f9b94d91",
+  "sig": "AAb6V1V+bVLMghlarjDj8xs3WUcL6N2x03+otsiK9Hz7XuPqLFm3xDme71PeFF94iRGww9WrUeTi0y5Zmhg+Bg==",
+  "signed_at": "2026-06-28T07:06:10Z",
+  "tree_size": 13
+}

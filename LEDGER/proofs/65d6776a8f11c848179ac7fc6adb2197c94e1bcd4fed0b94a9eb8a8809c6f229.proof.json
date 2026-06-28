@@ -1,0 +1,26 @@
+{
+  "leaf_hash": "97fa212f89e9444c2fd42293666a78b9f8d5ad6656ff0b5855158f3e7c9f8074",
+  "leaf_index": 1,
+  "proof": [
+    {
+      "hash": "302d83911133a5c6edba5366fe17d6583aa79ebf50c90870d4eeae5572ee79aa",
+      "side": "left"
+    },
+    {
+      "hash": "f25cb432422381441963c83da23e35bc675b32299cb11707cddd52beeb192d43",
+      "side": "right"
+    },
+    {
+      "hash": "91c8dc241a27b193df0b1c6667e79311768ce727713891ec159c6871a75d2603",
+      "side": "right"
+    },
+    {
+      "hash": "b3be8e6b9ce2f52b6964fe4379b371fe5cbe6f3550c8ac71b984289cac93e452",
+      "side": "right"
+    }
+  ],
+  "proof_version": "0.1",
+  "record_core_sha256": "65d6776a8f11c848179ac7fc6adb2197c94e1bcd4fed0b94a9eb8a8809c6f229",
+  "root_hash": "2ab4a0c59945b404402a8416b9f23296e8607ec51e1b131c6b0e65b1f9b94d91",
+  "tree_size": 13
+}
